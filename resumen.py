@@ -90,7 +90,7 @@ def generate_bullets(data):
         verbo = "avanza" if top_em["pct_day"] >= 0 else "retrocede"
         bullets.append(f"{top_em['nombre']} - {top_em['pais']} {verbo} {fmt_pct(top_em['pct_day'])} en mercados emergentes.")
 
-    desarrollados = [m for m in mercados_validos if m["nombre"] in ("DAX", "CAC 40", "Nikkei 225", "EFA", "EWU", "EWP")]
+    desarrollados = [m for m in mercados_validos if m["nombre"] in ("EWG", "EWQ", "EWJ", "EFA", "EWU", "EWP")]
     if desarrollados:
         top_dev = max(desarrollados, key=lambda m: abs(m["pct_day"]))
         verbo = "lidera" if top_dev["pct_day"] >= 0 else "pesa mas"

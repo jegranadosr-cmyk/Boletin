@@ -109,8 +109,12 @@
       <div class="col col-right">
         <div class="section-title">LOS INDICADORES EN VERDE Y EN ROJO</div>
         {% for nombre, d in indicadores.items() %}
-          <div class="indicator-card {{ 'up' if (d.pct_day or 0) >= 0 else 'down' }}">
-            <div class="icon" style="background:{{ '#1fa75c' if (d.pct_day or 0) >= 0 else '#e14a3a' }}">{{ nombre[:1] }}</div>
+          {# VIX/MOVE are volatility gauges: rising is bad for the market (red), falling is good (green) -- opposite of a price index. #}
+          {% set sentido = -1 if nombre in ('VIX', 'MOVE') else 1 %}
+          {% set eff_day = (d.pct_day or 0) * sentido %}
+          {% set eff_year = (d.pct_year or 0) * sentido %}
+          <div class="indicator-card {{ 'up' if eff_day >= 0 else 'down' }}">
+            <div class="icon" style="background:{{ '#1fa75c' if eff_day >= 0 else '#e14a3a' }}">{{ nombre[:1] }}</div>
             <div class="info">
               <div class="name">{{ nombre }}</div>
               <div class="value">{{ fmt_big(nombre, d.price) }}</div>
@@ -118,19 +122,20 @@
             <div class="change-stack">
               <div class="change-row">
                 <span class="change-label">DÍA</span>
-                <span class="pct {{ 'up' if (d.pct_day or 0) >= 0 else 'down' }}">{{ arrow(d.pct_day) }} {{ pct_plain(d.pct_day) }}</span>
+                <span class="pct {{ 'up' if eff_day >= 0 else 'down' }}">{{ arrow(d.pct_day) }} {{ pct_plain(d.pct_day) }}</span>
               </div>
               <div class="change-row">
                 <span class="change-label">AÑO</span>
-                <span class="pct {{ 'up' if (d.pct_year or 0) >= 0 else 'down' }}">{{ arrow(d.pct_year) }} {{ pct_plain(d.pct_year) }}</span>
+                <span class="pct {{ 'up' if eff_year >= 0 else 'down' }}">{{ arrow(d.pct_year) }} {{ pct_plain(d.pct_year) }}</span>
               </div>
             </div>
           </div>
         {% endfor %}
 
         {% if fear_greed %}
-          <div class="indicator-card {{ 'up' if (fear_greed.change_month or 0) >= 0 else 'down' }}">
-            <div class="icon" style="background:{{ '#1fa75c' if (fear_greed.change_month or 0) >= 0 else '#e14a3a' }}">F</div>
+          {# Color reflects the current zone (Miedo=rojo, Codicia=verde), not the monthly trend. #}
+          <div class="indicator-card {{ 'up' if fear_greed.score >= 50 else 'down' }}">
+            <div class="icon" style="background:{{ '#1fa75c' if fear_greed.score >= 50 else '#e14a3a' }}">F</div>
             <div class="info">
               <div class="name">FEAR &amp; GREED (CNN)</div>
               <div class="value">{{ '%.0f'|format(fear_greed.score) }} · {{ fear_greed.rating_es }}</div>

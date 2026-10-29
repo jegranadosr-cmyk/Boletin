@@ -128,8 +128,20 @@ def cross_pct_changes(sym_num, sym_den, invert_num=False, today=None):
     month_start = today.replace(day=1)
     year_start = today.replace(month=1, day=1)
 
-    prev_dates = [d for d in common_dates if d < today]
-    prev_close = cross_series[prev_dates[-1]] if prev_dates else None
+    # Reconstruct each leg's previous close from Yahoo's own live
+    # regularMarketChangePercent (instead of the last daily bar in the
+    # series), since the two legs' daily bars can close at different times
+    # and go stale relative to each other, producing a cross %dia that
+    # doesn't match the two legs' own live %dia figures.
+    pct_a = meta_a.get("regularMarketChangePercent")
+    pct_b = meta_b.get("regularMarketChangePercent")
+    if pct_a is not None and pct_b is not None:
+        prev_a = meta_a["regularMarketPrice"] / (1 + pct_a / 100)
+        prev_b = meta_b["regularMarketPrice"] / (1 + pct_b / 100)
+        prev_close = combine(prev_a, prev_b)
+    else:
+        prev_dates = [d for d in common_dates if d < today]
+        prev_close = cross_series[prev_dates[-1]] if prev_dates else None
     pct_day = ((price - prev_close) / prev_close * 100) if prev_close else None
 
     month_base = _baseline_before(cross_series, month_start)
@@ -194,15 +206,15 @@ ETFS_SECTORIALES = [
 ]
 
 MERCADOS_GLOBALES = [
-    ("DAX", "^GDAXI", "Alemania"),
+    ("EWG", "EWG", "Alemania"),
     ("EWZ", "EWZ", "Brasil"),
     ("MCHI", "MCHI", "China"),
     ("EWY", "EWY", "Corea del Sur"),
     ("EWP", "EWP", "España"),
-    ("CAC 40", "^FCHI", "Francia"),
+    ("EWQ", "EWQ", "Francia"),
     ("INDA", "INDA", "India"),
     ("EWI", "EWI", "Italia"),
-    ("Nikkei 225", "^N225", "Japón"),
+    ("EWJ", "EWJ", "Japón"),
     ("EWW", "EWW", "México"),
     ("EWU", "EWU", "Reino Unido"),
     ("EWT", "EWT", "Taiwán"),
@@ -216,6 +228,7 @@ MATERIAS_PRIMAS = [
     ("Brent", "BZ=F"),
     ("Oro", "GC=F"),
     ("Plata", "SI=F"),
+    ("Cobre", "HG=F"),
 ]
 
 EXTRA = {

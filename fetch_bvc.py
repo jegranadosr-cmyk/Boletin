@@ -79,7 +79,7 @@ def _baseline_before(series, cutoff_date):
 
 def _pct_changes(series, today):
     if not series:
-        return None, None, None, None
+        return None, None, None, None, False
     dates_sorted = sorted(series)
     last_date = dates_sorted[-1]
     price = series[last_date]
@@ -87,6 +87,10 @@ def _pct_changes(series, today):
     prev_dates = [d for d in dates_sorted if d < last_date]
     prev_close = series[prev_dates[-1]] if prev_dates else None
     pct_day = ((price - prev_close) / prev_close * 100) if prev_close else None
+    # When this runs before/during the BVC session, the API repeats yesterday's
+    # close verbatim as "today's" price (no new print yet) -- flag that instead
+    # of reporting a misleading "+0.00%" as if the market had actually closed flat.
+    sin_negociacion = prev_close is not None and price == prev_close
 
     month_start = today.replace(day=1)
     year_start = today.replace(month=1, day=1)
@@ -95,7 +99,7 @@ def _pct_changes(series, today):
     pct_month = ((price - month_base) / month_base * 100) if month_base else None
     pct_year = ((price - year_base) / year_base * 100) if year_base else None
 
-    return price, pct_day, pct_month, pct_year
+    return price, pct_day, pct_month, pct_year, sin_negociacion
 
 
 def _fetch_market_cap_cop_b(codigo):
@@ -118,9 +122,10 @@ def build_bvc_data(today=None):
     for nombre, codigo in EMISORES:
         try:
             series = _fetch_series(codigo)
-            price, pct_day, pct_month, pct_year = _pct_changes(series, today)
+            price, pct_day, pct_month, pct_year, sin_negociacion = _pct_changes(series, today)
         except Exception:
             price = pct_day = pct_month = pct_year = None
+            sin_negociacion = False
         if codigo == "ICOLCAP":
             market_cap_b = None  # filled below, once the other companies are known
         else:
@@ -131,6 +136,7 @@ def build_bvc_data(today=None):
         out.append({
             "nombre": nombre, "codigo": codigo, "market_cap_b": market_cap_b,
             "precio": price, "pct_day": pct_day, "pct_month": pct_month, "pct_year": pct_year,
+            "sin_negociacion": sin_negociacion,
         })
 
     return out
