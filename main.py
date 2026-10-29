@@ -54,7 +54,7 @@ def build_data():
     data["siete_magnificas"] = siete
 
     # Top empresas de la cadena de semiconductores (market cap + variaciones)
-    r, err = safe(fsem.build_semis_data, 9)
+    r, err = safe(fsem.build_semis_data, 10)
     data["semis"] = r if not err else []
     if err:
         errors.append(f"Semis: {err}")

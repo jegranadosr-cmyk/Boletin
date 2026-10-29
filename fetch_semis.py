@@ -23,10 +23,11 @@ def _ipv4_only_getaddrinfo(host, port, family=0, type=0, proto=0, flags=0):
 
 socket.getaddrinfo = _ipv4_only_getaddrinfo
 
-# (nombre, ticker Yahoo o None, slug companiesmarketcap.com o None) -- ordered
-# by the ranking in the reference image.
+# (nombre, ticker Yahoo o None, slug companiesmarketcap.com o None).
+# Order doesn't matter here anymore -- build_semis_data sorts by market cap.
 EMPRESAS = [
     ("TSMC", "TSM", "tsmc"),
+    ("Nvidia", "NVDA", "nvidia"),
     ("Broadcom", "AVGO", "broadcom"),
     ("Samsung", "005930.KS", "samsung"),
     ("Micron", "MU", "micron-technology"),
@@ -40,8 +41,7 @@ EMPRESAS = [
 
 def build_semis_data(limit=None):
     out = []
-    items = EMPRESAS[:limit] if limit else EMPRESAS
-    for nombre, ticker, slug in items:
+    for nombre, ticker, slug in EMPRESAS:
         if ticker is None:
             out.append({
                 "nombre": nombre, "market_cap_b": None,
@@ -61,4 +61,6 @@ def build_semis_data(limit=None):
             "nombre": nombre, "market_cap_b": mcap,
             "pct_day": pct_day, "pct_month": pct_month, "pct_year": pct_year,
         })
-    return out
+
+    out.sort(key=lambda x: x["market_cap_b"] if x["market_cap_b"] is not None else -1, reverse=True)
+    return out[:limit] if limit else out

@@ -122,7 +122,7 @@ def build_bvc_data(today=None):
         except Exception:
             price = pct_day = pct_month = pct_year = None
         if codigo == "ICOLCAP":
-            market_cap_b = None
+            market_cap_b = None  # filled below, once the other companies are known
         else:
             try:
                 market_cap_b = _fetch_market_cap_cop_b(codigo)
@@ -132,4 +132,14 @@ def build_bvc_data(today=None):
             "nombre": nombre, "codigo": codigo, "market_cap_b": market_cap_b,
             "precio": price, "pct_day": pct_day, "pct_month": pct_month, "pct_year": pct_year,
         })
+
+    # iCOLCAP tracks the COLCAP index -- it has no market cap of its own, so show
+    # the sum of the market caps of the other tracked emisores as a proxy for the
+    # aggregate size of the index it replicates.
+    caps = [r["market_cap_b"] for r in out if r["codigo"] != "ICOLCAP" and r["market_cap_b"] is not None]
+    if caps:
+        for r in out:
+            if r["codigo"] == "ICOLCAP":
+                r["market_cap_b"] = sum(caps)
+
     return out
