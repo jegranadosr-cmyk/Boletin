@@ -88,7 +88,7 @@
         </table>
       </div>
 
-      <div class="col">
+      <div class="col col-right">
         <div class="section-title">LOS INDICADORES EN VERDE Y EN ROJO</div>
         {% for nombre, d in indicadores.items() %}
           <div class="indicator-card {{ 'up' if (d.pct_day or 0) >= 0 else 'down' }}">
@@ -128,22 +128,24 @@
           </div>
         {% endif %}
 
-        <div class="section-title">ETFS SECTORIALES</div>
-        <div class="sector-grid">
-          {% for s in etfs_sectoriales %}
-            <div class="sector-card {{ 'down' if (s.pct_day or 0) < 0 else '' }}">
-              <div class="ticker">{{ s.ticker }}</div>
-              <div class="nombre">{{ s.nombre }}</div>
-              <div class="stat-row">
-                <span class="stat-label">DÍA</span>
-                <span class="pct {{ 'up' if (s.pct_day or 0) >= 0 else 'down' }}">{{ arrow(s.pct_day) }} {{ pct_plain(s.pct_day) }}</span>
+        <div class="sector-block">
+          <div class="section-title">ETFS SECTORIALES</div>
+          <div class="sector-grid">
+            {% for s in etfs_sectoriales %}
+              <div class="sector-card {{ 'down' if (s.pct_day or 0) < 0 else '' }}">
+                <div class="ticker">{{ s.ticker }}</div>
+                <div class="nombre">{{ s.nombre }}</div>
+                <div class="stat-row">
+                  <span class="stat-label">DÍA</span>
+                  <span class="pct {{ 'up' if (s.pct_day or 0) >= 0 else 'down' }}">{{ arrow(s.pct_day) }} {{ pct_plain(s.pct_day) }}</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">AÑO</span>
+                  <span class="pct {{ 'up' if (s.pct_year or 0) >= 0 else 'down' }}">{{ arrow(s.pct_year) }} {{ pct_plain(s.pct_year) }}</span>
+                </div>
               </div>
-              <div class="stat-row">
-                <span class="stat-label">AÑO</span>
-                <span class="pct {{ 'up' if (s.pct_year or 0) >= 0 else 'down' }}">{{ arrow(s.pct_year) }} {{ pct_plain(s.pct_year) }}</span>
-              </div>
-            </div>
-          {% endfor %}
+            {% endfor %}
+          </div>
         </div>
       </div>
     </div>
