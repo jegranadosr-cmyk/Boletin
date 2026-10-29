@@ -133,13 +133,4 @@ def build_bvc_data(today=None):
             "precio": price, "pct_day": pct_day, "pct_month": pct_month, "pct_year": pct_year,
         })
 
-    # iCOLCAP tracks the COLCAP index -- it has no market cap of its own, so show
-    # the sum of the market caps of the other tracked emisores as a proxy for the
-    # aggregate size of the index it replicates.
-    caps = [r["market_cap_b"] for r in out if r["codigo"] != "ICOLCAP" and r["market_cap_b"] is not None]
-    if caps:
-        for r in out:
-            if r["codigo"] == "ICOLCAP":
-                r["market_cap_b"] = sum(caps)
-
     return out
