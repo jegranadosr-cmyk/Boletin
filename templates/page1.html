@@ -24,8 +24,8 @@
 
 
   <div class="content">
-    <div class="two-col">
-      <div class="col">
+    <div class="two-col two-col-fill">
+      <div class="col col-spread">
         <table class="boletin-table">
           <caption class="caption-lg">Las Siete Magníficas</caption>
           <thead><tr><th>Ticker</th><th class="num">Precio</th><th class="num">%Día</th><th class="num">%Mes</th><th class="num">%Año</th></tr></thead>
@@ -42,15 +42,17 @@
           </tbody>
         </table>
 
-        <div class="section-title">LAS SIETE MAGNÍFICAS</div>
-        <div class="bar-chart">
-          {% for m in siete_magnificas %}
-            <div class="bar-wrap">
-              <div class="bar-val">{{ pct_plain(m.pct_day) }}</div>
-              <div class="bar {{ 'neg' if (m.pct_day or 0) < 0 else '' }}" style="height:{{ bar_height(m.pct_day, siete_magnificas) }}px"></div>
-              <div class="bar-label">{{ m.ticker }}</div>
-            </div>
-          {% endfor %}
+        <div class="chart-block">
+          <div class="section-title">LAS SIETE MAGNÍFICAS</div>
+          <div class="bar-chart">
+            {% for m in siete_magnificas %}
+              <div class="bar-wrap">
+                <div class="bar-val">{{ pct_plain(m.pct_day) }}</div>
+                <div class="bar {{ 'neg' if (m.pct_day or 0) < 0 else '' }}" style="height:{{ bar_height(m.pct_day, siete_magnificas) }}px"></div>
+                <div class="bar-label">{{ m.ticker }}</div>
+              </div>
+            {% endfor %}
+          </div>
         </div>
 
         <table class="boletin-table">

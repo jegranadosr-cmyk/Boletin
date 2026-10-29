@@ -25,6 +25,7 @@ body {
 
 .page {
   width: 1000px;
+  min-height: 1490px;
   background: #ffffff;
   display: flex;
   flex-direction: column;
@@ -33,7 +34,10 @@ body {
 .content {
   padding: 24px 32px;
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
+.two-col-fill { flex: 1; }
 
 .footer {
   display: flex;
@@ -154,6 +158,8 @@ table.boletin-table td.sub { color: var(--text-muted); font-size: 11.5px; }
 
 .two-col { display: flex; gap: 28px; }
 .col { flex: 1; min-width: 0; }
+.col-spread { display: flex; flex-direction: column; justify-content: space-between; }
+.col-spread > .chart-block { margin-bottom: 0; }
 
 /* page1 right column cards */
 .section-title {
@@ -190,7 +196,7 @@ table.boletin-table td.sub { color: var(--text-muted); font-size: 11.5px; }
 
 .sector-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 8px;
   margin-bottom: 20px;
 }
