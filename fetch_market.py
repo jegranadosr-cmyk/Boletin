@@ -147,7 +147,7 @@ ETFS_SECTORIALES = [
     ("XLRE", "Bienes raíces"),
     ("AIQ", "IA / Big Data"),
     ("XLU", "Utilities"),
-    ("^SOX", "Semiconductores (índice)"),
+    ("XLY", "Cons. discrecional"),
     ("XLB", "Materiales"),
     ("SMH", "Semiconductores"),
     ("KRE", "Banca regional"),
@@ -169,6 +169,7 @@ MERCADOS_GLOBALES = [
     ("EFA", "EFA", "Desarrollados ex-EE.UU."),
     ("IEMG", "IEMG", "Emergentes (amplio)"),
     ("EMXC", "EMXC", "Emergentes ex-China"),
+    ("ACWI", "ACWI", "Mundial (pulso global, contexto EE.UU.)"),
 ]
 
 MATERIAS_PRIMAS = [
