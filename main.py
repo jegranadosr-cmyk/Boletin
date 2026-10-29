@@ -113,7 +113,7 @@ def build_data():
         if err:
             errors.append(f"{nombre}: {err}")
 
-    for nombre, ticker in {"USD/EUR": "USDEUR=X", "USD/CNY": "USDCNY=X"}.items():
+    for nombre, ticker in {"USD/EUR": "USDEUR=X", "USD/CNY": "USDCNY=X", "USD/JPY": "USDJPY=X"}.items():
         r, err = safe(fm.pct_changes_for_symbol, ticker)
         if err:
             divisas[nombre] = {"price": None, "pct_day": None, "pct_month": None, "pct_year": None}
