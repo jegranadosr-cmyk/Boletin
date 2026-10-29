@@ -46,9 +46,14 @@ def build_data():
         if mcap_err:
             errors.append(f"{t} mcap: {mcap_err}")
         if yahoo_ticker is None:
-            # Privately held (SpaceX): no ticker, no daily price history.
+            # Privately held (SpaceX): no Yahoo ticker, but companiesmarketcap.com
+            # tracks secondary-market share price changes for it (no %mes stat exists there).
+            changes, chg_err = safe(fm.fetch_private_company_changes, fm.SIETE_MAGNIFICAS_MCAP_SLUGS[t])
+            if chg_err:
+                errors.append(f"{t} changes: {chg_err}")
+            pct_day, pct_year = changes if changes else (None, None)
             siete.append({"ticker": COMPANY_NAMES[t], "nombre_empresa": COMPANY_NAMES[t], "market_cap_b": mcap,
-                          "pct_day": None, "pct_month": None, "pct_year": None})
+                          "pct_day": pct_day, "pct_month": None, "pct_year": pct_year})
             continue
         r, err = safe(fm.pct_changes_for_symbol, yahoo_ticker)
         if err:

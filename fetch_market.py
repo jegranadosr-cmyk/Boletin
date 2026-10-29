@@ -38,6 +38,35 @@ def fetch_market_cap_b(slug):
     return value * 1000 if unit == "Trillion" else value
 
 
+def fetch_private_company_changes(slug):
+    """For non-public companies tracked by companiesmarketcap.com (e.g. SpaceX)
+    via secondary-market share price discovery -- returns (pct_day, pct_year)
+    from their "Change (1 day)" / "Change (1 year)" stat boxes. Either can come
+    back None if the site shows "N/A" (no secondary-market trades in that
+    window) -- there is no "1 month" stat at all on these pages.
+    """
+    import re
+    req = urllib.request.Request(MCAP_URL.format(slug=slug), headers=MCAP_HEADERS)
+    with urllib.request.urlopen(req, timeout=20) as resp:
+        html = resp.read().decode("utf-8", errors="ignore")
+
+    def _extract(label):
+        # Scope the match to a single info-box (no other "line1" in between),
+        # otherwise a non-greedy .*? would span across multiple stat boxes and
+        # grab the wrong value.
+        m = re.search(
+            r'<div class="line1">((?:(?!<div class="line1">).)*?)</div>\s*'
+            r'<div class="line2">' + re.escape(label) + r'</div>',
+            html, re.S,
+        )
+        if not m:
+            return None
+        pm = re.search(r'(-?[\d.]+)%', m.group(1))
+        return float(pm.group(1)) if pm else None
+
+    return _extract("Change (1 day)"), _extract("Change (1 year)")
+
+
 def _get_json(url, retries=3, timeout=15):
     last_err = None
     for attempt in range(retries):
