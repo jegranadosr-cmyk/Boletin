@@ -151,15 +151,19 @@
           <div class="sector-grid">
             {% for s in etfs_sectoriales %}
               <div class="sector-card {{ 'down' if (s.pct_day or 0) < 0 else '' }}">
-                <div class="ticker">{{ s.ticker }}</div>
-                <div class="nombre">{{ s.nombre }}</div>
-                <div class="stat-row">
-                  <span class="stat-label">DÍA</span>
-                  <span class="pct {{ 'up' if (s.pct_day or 0) >= 0 else 'down' }}">{{ arrow(s.pct_day) }} {{ pct_plain(s.pct_day) }}</span>
+                <div class="sector-head">
+                  <span class="ticker">{{ s.ticker }}</span>
+                  <span class="nombre">{{ s.nombre }}</span>
                 </div>
-                <div class="stat-row">
-                  <span class="stat-label">AÑO</span>
-                  <span class="pct {{ 'up' if (s.pct_year or 0) >= 0 else 'down' }}">{{ arrow(s.pct_year) }} {{ pct_plain(s.pct_year) }}</span>
+                <div class="sector-stats-row">
+                  <div class="stat-col">
+                    <span class="stat-label">DÍA</span>
+                    <span class="pct {{ 'up' if (s.pct_day or 0) >= 0 else 'down' }}">{{ arrow(s.pct_day) }} {{ pct_plain(s.pct_day) }}</span>
+                  </div>
+                  <div class="stat-col">
+                    <span class="stat-label">AÑO</span>
+                    <span class="pct {{ 'up' if (s.pct_year or 0) >= 0 else 'down' }}">{{ arrow(s.pct_year) }} {{ pct_plain(s.pct_year) }}</span>
+                  </div>
                 </div>
               </div>
             {% endfor %}
