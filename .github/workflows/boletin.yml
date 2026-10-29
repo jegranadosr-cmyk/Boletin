@@ -2,8 +2,8 @@ name: Boletin Unvesting diario
 
 on:
   schedule:
-    # 7:00 am America/Bogota (UTC-5) = 12:00 UTC, Monday-Friday
-    - cron: "0 12 * * 1-5"
+    # 7:00 am America/Bogota (UTC-5) = 12:00 UTC, every day
+    - cron: "0 12 * * *"
   workflow_dispatch: {}
 
 jobs:
