@@ -140,7 +140,15 @@ def cross_pct_changes(sym_num, sym_den, invert_num=False, today=None):
     return {"price": price, "pct_day": pct_day, "pct_month": pct_month, "pct_year": pct_year}
 
 
-SIETE_MAGNIFICAS = ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "TSLA", "META"]
+SIETE_MAGNIFICAS = ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "TSLA", "META", "SPACEX"]
+
+# SpaceX has no ticker -- it's privately held, so there is no Yahoo quote for it,
+# only a market cap (from its latest funding-round valuation, tracked by
+# companiesmarketcap.com same as other private companies like CXMT).
+SIETE_MAGNIFICAS_TICKERS = {
+    "AAPL": "AAPL", "MSFT": "MSFT", "GOOGL": "GOOGL", "AMZN": "AMZN",
+    "NVDA": "NVDA", "TSLA": "TSLA", "META": "META", "SPACEX": None,
+}
 
 SIETE_MAGNIFICAS_MCAP_SLUGS = {
     "AAPL": "apple",
@@ -150,6 +158,7 @@ SIETE_MAGNIFICAS_MCAP_SLUGS = {
     "NVDA": "nvidia",
     "TSLA": "tesla",
     "META": "meta-platforms",
+    "SPACEX": "spacex",
 }
 
 INDICADORES = {
@@ -183,20 +192,21 @@ ETFS_SECTORIALES = [
 
 MERCADOS_GLOBALES = [
     ("DAX", "^GDAXI", "Alemania"),
-    ("CAC 40", "^FCHI", "Francia"),
-    ("Nikkei 225", "^N225", "Japón"),
+    ("EWZ", "EWZ", "Brasil"),
     ("MCHI", "MCHI", "China"),
     ("EWY", "EWY", "Corea del Sur"),
-    ("EWT", "EWT", "Taiwán"),
-    ("INDA", "INDA", "India"),
-    ("EWU", "EWU", "Reino Unido"),
     ("EWP", "EWP", "España"),
+    ("CAC 40", "^FCHI", "Francia"),
+    ("INDA", "INDA", "India"),
     ("EWI", "EWI", "Italia"),
-    ("EWZ", "EWZ", "Brasil"),
+    ("Nikkei 225", "^N225", "Japón"),
+    ("EWW", "EWW", "México"),
+    ("EWU", "EWU", "Reino Unido"),
+    ("EWT", "EWT", "Taiwán"),
     ("EFA", "EFA", "Desarrollados ex-EE.UU."),
-    ("IEMG", "IEMG", "Emergentes (amplio)"),
+    ("IEMG", "IEMG", "Emergentes"),
     ("EMXC", "EMXC", "Emergentes ex-China"),
-    ("ACWI", "ACWI", "Mundial (pulso global, contexto EE.UU.)"),
+    ("ACWI", "ACWI", "Mundial"),
 ]
 
 MATERIAS_PRIMAS = [
