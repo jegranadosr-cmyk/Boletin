@@ -1,0 +1,156 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="{{ templates }}/base.css">
+</head>
+<body>
+<div class="page">
+  <div class="hero-header">
+    <div class="hero-left">
+      <div class="logo-block">
+        <div class="logo-row"><img class="mark" src="{{ assets }}/unv_logo_white.png"></div>
+      </div>
+      <div class="hero-title">
+        <h1>Lupa al <span class="accent">mercado</span></h1>
+        <div class="sub">Unvesting Group S.A.S.</div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="label">F E C H A</div>
+      <div class="date">{{ fecha_larga }}</div>
+    </div>
+  </div>
+
+
+  <div class="content">
+    <div class="two-col">
+      <div class="col">
+        <table class="boletin-table">
+          <caption class="caption-lg">Las Siete Magníficas</caption>
+          <thead><tr><th>Ticker</th><th class="num">Precio</th><th class="num">%Día</th><th class="num">%Mes</th><th class="num">%Año</th></tr></thead>
+          <tbody>
+          {% for m in siete_magnificas %}
+            <tr>
+              <td class="name">{{ m.ticker }}</td>
+              <td class="num">{{ fmt_price(m.price) }}</td>
+              <td class="num">{{ pct_span(m.pct_day) }}</td>
+              <td class="num">{{ pct_span(m.pct_month) }}</td>
+              <td class="num">{{ pct_span(m.pct_year) }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+
+        <div class="section-title">LAS SIETE MAGNÍFICAS</div>
+        <div class="bar-chart">
+          {% for m in siete_magnificas %}
+            <div class="bar-wrap">
+              <div class="bar-val">{{ pct_plain(m.pct_day) }}</div>
+              <div class="bar {{ 'neg' if (m.pct_day or 0) < 0 else '' }}" style="height:{{ bar_height(m.pct_day, siete_magnificas) }}px"></div>
+              <div class="bar-label">{{ m.ticker }}</div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <table class="boletin-table">
+          <caption class="caption-lg">Divisas</caption>
+          <thead><tr><th>Divisa</th><th class="num">Nivel</th><th class="num">%Día</th><th class="num">%Mes</th><th class="num">%Año</th></tr></thead>
+          <tbody>
+          {% for nombre, d in divisas.items() %}
+            <tr>
+              <td class="name">{{ nombre }}</td>
+              <td class="num">{{ fmt_price(d.price) }}</td>
+              <td class="num">{{ pct_span(d.pct_day) }}</td>
+              <td class="num">{{ pct_span(d.pct_month) }}</td>
+              <td class="num">{{ pct_span(d.pct_year) }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+
+        <table class="boletin-table">
+          <caption class="caption-lg">Materias primas</caption>
+          <thead><tr><th>Referencia</th><th class="num">Precio</th><th class="num">%Día</th><th class="num">%Mes</th><th class="num">%Año</th></tr></thead>
+          <tbody>
+          {% for nombre, d in materias_primas.items() %}
+            <tr>
+              <td class="name">{{ nombre }}</td>
+              <td class="num">{{ fmt_price(d.price) }}</td>
+              <td class="num">{{ pct_span(d.pct_day) }}</td>
+              <td class="num">{{ pct_span(d.pct_month) }}</td>
+              <td class="num">{{ pct_span(d.pct_year) }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="col">
+        <div class="section-title">LOS INDICADORES EN VERDE Y EN ROJO</div>
+        {% for nombre, d in indicadores.items() %}
+          <div class="indicator-card {{ 'up' if (d.pct_day or 0) >= 0 else 'down' }}">
+            <div class="icon" style="background:{{ '#1fa75c' if (d.pct_day or 0) >= 0 else '#e14a3a' }}">{{ nombre[:1] }}</div>
+            <div class="info">
+              <div class="name">{{ nombre }}</div>
+              <div class="value">{{ fmt_big(nombre, d.price) }}</div>
+            </div>
+            <div class="change-stack">
+              <div class="change-row">
+                <span class="change-label">DÍA</span>
+                <span class="pct {{ 'up' if (d.pct_day or 0) >= 0 else 'down' }}">{{ arrow(d.pct_day) }} {{ pct_plain(d.pct_day) }}</span>
+              </div>
+              <div class="change-row">
+                <span class="change-label">AÑO</span>
+                <span class="pct {{ 'up' if (d.pct_year or 0) >= 0 else 'down' }}">{{ arrow(d.pct_year) }} {{ pct_plain(d.pct_year) }}</span>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+
+        {% if fear_greed %}
+          <div class="indicator-card {{ 'up' if (fear_greed.change_month or 0) >= 0 else 'down' }}">
+            <div class="icon" style="background:{{ '#1fa75c' if (fear_greed.change_month or 0) >= 0 else '#e14a3a' }}">F</div>
+            <div class="info">
+              <div class="name">FEAR &amp; GREED (CNN)</div>
+              <div class="value">{{ '%.0f'|format(fear_greed.score) }} · {{ fear_greed.rating_es }}</div>
+            </div>
+            <div class="change-stack">
+              <div class="change-row">
+                <span class="change-label">MES</span>
+                <span class="pct {{ 'up' if (fear_greed.change_month or 0) >= 0 else 'down' }}">
+                  {{ arrow(fear_greed.change_month) }} {{ '%+.1f'|format(fear_greed.change_month) if fear_greed.change_month is not none else '-' }} pts
+                </span>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+
+        <div class="section-title">ETFS SECTORIALES</div>
+        <div class="sector-grid">
+          {% for s in etfs_sectoriales %}
+            <div class="sector-card {{ 'down' if (s.pct_day or 0) < 0 else '' }}">
+              <div class="ticker">{{ s.ticker }}</div>
+              <div class="nombre">{{ s.nombre }}</div>
+              <div class="stat-row">
+                <span class="stat-label">DÍA</span>
+                <span class="pct {{ 'up' if (s.pct_day or 0) >= 0 else 'down' }}">{{ arrow(s.pct_day) }} {{ pct_plain(s.pct_day) }}</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-label">AÑO</span>
+                <span class="pct {{ 'up' if (s.pct_year or 0) >= 0 else 'down' }}">{{ arrow(s.pct_year) }} {{ pct_plain(s.pct_year) }}</span>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div>Boletín Unvesting &bull; Área de Investigación e Innovación &bull; Información de mercado &bull; No constituye asesoría financiera</div>
+    <div class="page-num">Página 1</div>
+  </div>
+</div>
+</body>
+</html>

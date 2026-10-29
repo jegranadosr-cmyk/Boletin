@@ -1,0 +1,106 @@
+"""Fetch BVC (Bolsa de Valores de Colombia) stock prices + daily/monthly/yearly %
+change from La Republica's public JSON API (no login, no headless browser needed).
+
+Endpoint discovered via the 'movimiento accionario' stock pages:
+  https://www.larepublica.co/api/quote/bvc-historic/{TICKER}?scale=4&qName={TICKER}
+scale=4 returns ~1 year of daily closes, which is enough to compute %dia, %mes
+(vs last close before the 1st of the current month) and %ano (vs last close
+before Jan 1 of the current year) the same way fetch_market.py does for Yahoo
+Finance tickers.
+"""
+import datetime
+import json
+import urllib.request
+
+HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+
+URL_TMPL = "https://www.larepublica.co/api/quote/bvc-historic/{code}?scale=4&qName={code}"
+
+EMISORES = [
+    ("iCOLCAP", "ETF del COLCAP", "ICOLCAP"),
+    ("Ecopetrol", "Petróleo y gas", "ECOPETROL"),
+    ("Grupo Cibest PF", "Banca", "CIBEST"),
+    ("ISA", "Transmisión", "ISA"),
+    ("Cementos Argos", "Cemento", "CEMARGOS"),
+    ("Grupo Sura PF", "Inversiones", "GRUPOSURA"),
+    ("Grupo Argos", "Holding", "GRUPOARGOS"),
+    ("Grupo Energía Bogotá", "Energía y gas", "GEB"),
+    ("Mineros", "Minería de oro", "MINEROS"),
+    ("Celsia", "Generación", "CELSIA"),
+    ("Corficolombiana", "Banca de inversión", "CORFICOLCF"),
+    ("Grupo Aval PF", "Banca", "GRUPOAVAL"),
+]
+
+MESES = {
+    "ene": 1, "feb": 2, "mar": 3, "abr": 4, "may": 5, "jun": 6,
+    "jul": 7, "ago": 8, "sept": 9, "set": 9, "oct": 10, "nov": 11, "dic": 12,
+}
+
+
+def _parse_fecha(s):
+    # formats like "28 oct 26"
+    dia, mes_txt, anio2 = s.split(" ")
+    mes = MESES[mes_txt.strip(".").lower()]
+    anio = 2000 + int(anio2)
+    return datetime.date(anio, mes, int(dia))
+
+
+def _fetch_series(code):
+    url = URL_TMPL.format(code=code)
+    req = urllib.request.Request(url, headers=HEADERS)
+    with urllib.request.urlopen(req, timeout=20) as resp:
+        data = json.loads(resp.read())
+    rows = data["graphData"][1:]
+    series = {}
+    for fecha_str, precio in rows:
+        try:
+            d = _parse_fecha(fecha_str)
+        except Exception:
+            continue
+        if precio is not None:
+            series[d] = float(precio)
+    return series
+
+
+def _baseline_before(series, cutoff_date):
+    candidates = [d for d in series if d < cutoff_date]
+    if not candidates:
+        return None
+    return series[max(candidates)]
+
+
+def _pct_changes(series, today):
+    if not series:
+        return None, None, None, None
+    dates_sorted = sorted(series)
+    last_date = dates_sorted[-1]
+    price = series[last_date]
+
+    prev_dates = [d for d in dates_sorted if d < last_date]
+    prev_close = series[prev_dates[-1]] if prev_dates else None
+    pct_day = ((price - prev_close) / prev_close * 100) if prev_close else None
+
+    month_start = today.replace(day=1)
+    year_start = today.replace(month=1, day=1)
+    month_base = _baseline_before(series, month_start)
+    year_base = _baseline_before(series, year_start)
+    pct_month = ((price - month_base) / month_base * 100) if month_base else None
+    pct_year = ((price - year_base) / year_base * 100) if year_base else None
+
+    return price, pct_day, pct_month, pct_year
+
+
+def build_bvc_data(today=None):
+    today = today or datetime.date.today()
+    out = []
+    for nombre, sector, codigo in EMISORES:
+        try:
+            series = _fetch_series(codigo)
+            price, pct_day, pct_month, pct_year = _pct_changes(series, today)
+        except Exception:
+            price = pct_day = pct_month = pct_year = None
+        out.append({
+            "nombre": nombre, "sector": sector, "codigo": codigo,
+            "precio": price, "pct_day": pct_day, "pct_month": pct_month, "pct_year": pct_year,
+        })
+    return out
