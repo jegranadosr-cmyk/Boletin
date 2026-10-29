@@ -44,11 +44,14 @@
 
         <div class="chart-block">
           <div class="section-title">LAS 8 MAGNÍFICAS</div>
+          {% set chart = bar_chart_layout(siete_magnificas) %}
           <div class="bar-chart">
             {% for m in siete_magnificas %}
+              {% set b = chart.bars[loop.index0] %}
               <div class="bar-wrap">
-                <div class="bar-val">{{ pct_plain(m.pct_day) }}</div>
-                <div class="bar {{ 'neg' if (m.pct_day or 0) < 0 else '' }}" style="height:{{ bar_height(m.pct_day, siete_magnificas) }}px"></div>
+                <div class="zero-line" style="top:{{ chart.zero_y }}px"></div>
+                <div class="bar-val" style="top:{{ b.val_top }}px">{{ pct_plain(m.pct_day) }}</div>
+                <div class="bar {{ 'neg' if b.neg else '' }}" style="top:{{ b.bar_top }}px; height:{{ b.bar_h }}px"></div>
                 <div class="bar-label">{{ m.ticker }}</div>
               </div>
             {% endfor %}

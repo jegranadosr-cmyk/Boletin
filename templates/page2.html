@@ -13,13 +13,14 @@
 
     <table class="boletin-table">
       <caption class="caption-lg">Mercados globales</caption>
-      <thead><tr><th>ETF</th><th>País</th><th class="num">%Día</th><th class="num">%Mes</th><th class="num">%Año</th></tr></thead>
+      <thead><tr><th>ETF</th><th>País</th><th class="num">%Día</th><th class="num">%Semana</th><th class="num">%Mes</th><th class="num">%Año</th></tr></thead>
       <tbody>
       {% for m in mercados_globales %}
         <tr>
           <td class="name">{{ m.nombre }}</td>
           <td class="sub">{{ m.pais }}</td>
           <td class="num">{{ pct_span(m.pct_day) }}</td>
+          <td class="num">{{ pct_span(m.pct_week) }}</td>
           <td class="num">{{ pct_span(m.pct_month) }}</td>
           <td class="num">{{ pct_span(m.pct_year) }}</td>
         </tr>

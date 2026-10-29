@@ -250,13 +250,14 @@ table.boletin-table td.sub { color: var(--text-muted); font-size: 11.5px; }
 .sector-card .stat-label { font-size: 9.5px; color: var(--text-muted); font-weight: 700; letter-spacing: 0.3px; }
 .sector-card .pct { font-size: 11.5px; font-weight: 800; white-space: nowrap; }
 
-.bar-chart { display: flex; align-items: flex-end; gap: 9px; height: 160px; padding: 10px 4px 0; margin-bottom: 20px; }
+.bar-chart { display: flex; align-items: stretch; gap: 9px; height: 160px; padding: 10px 4px 0; margin-bottom: 20px; }
 .bar-chart-full { height: 210px; gap: 28px; padding: 14px 8px 0; }
-.bar-chart .bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
-.bar-chart .bar-val { font-size: 11px; font-weight: 700; margin-bottom: 4px; }
-.bar-chart .bar { width: 70%; background: var(--green-bright); border-radius: 3px 3px 0 0; }
-.bar-chart .bar.neg { background: var(--red-text); }
-.bar-chart .bar-label { font-size: 10px; color: var(--text-muted); margin-top: 6px; font-weight: 700; }
+.bar-chart .bar-wrap { flex: 1; position: relative; }
+.bar-chart .zero-line { position: absolute; left: 0; right: 0; height: 1px; background: rgba(0,0,0,0.15); }
+.bar-chart .bar-val { position: absolute; left: 0; right: 0; text-align: center; font-size: 11px; font-weight: 700; }
+.bar-chart .bar { position: absolute; left: 15%; width: 70%; background: var(--green-bright); border-radius: 3px 3px 0 0; }
+.bar-chart .bar.neg { background: var(--red-text); border-radius: 0 0 3px 3px; }
+.bar-chart .bar-label { position: absolute; left: 0; right: 0; bottom: 0; text-align: center; font-size: 10px; color: var(--text-muted); font-weight: 700; }
 
 /* resumen ejecutivo */
 .resumen-list { list-style: none; padding: 0; margin: 0 0 24px; }

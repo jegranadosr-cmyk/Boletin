@@ -50,13 +50,39 @@ def arrow(v):
     return "▲" if v >= 0 else "▼"
 
 
-def bar_height(v, all_items):
-    vals = [abs(i["pct_day"]) for i in all_items if i["pct_day"] is not None]
-    max_val = max(vals) if vals else 1
-    if v is None:
-        return 4
-    h = max(4, int(abs(v) / max_val * 140)) if max_val else 4
-    return h
+def bar_chart_layout(items, key="pct_day", wrap_h=150, top_reserve=14,
+                      bottom_ticker=18, bottom_reserve=14, min_bar=3):
+    """Lays out a diverging (zero-centered) bar chart: positive values grow
+    up from a shared zero line, negative values grow down from it, each side
+    scaled independently so neither sign dwarfs the other. Returns the zero
+    line's y (px from the top of each bar-wrap) plus per-item bar/label
+    pixel positions, all addressed from that same top-left origin.
+    """
+    vals = [i.get(key) for i in items]
+    pos_vals = [v for v in vals if v is not None and v >= 0]
+    neg_vals = [abs(v) for v in vals if v is not None and v < 0]
+    max_pos = max(pos_vals) if pos_vals else 0
+    max_neg = max(neg_vals) if neg_vals else 0
+    total = max_pos + max_neg
+
+    bar_budget = wrap_h - top_reserve - bottom_ticker - bottom_reserve
+    up_budget = bar_budget * (max_pos / total) if total else bar_budget / 2
+    down_budget = bar_budget - up_budget
+    zero_y = top_reserve + up_budget
+
+    bars = []
+    for v in vals:
+        if v is None:
+            bars.append({"bar_top": zero_y, "bar_h": 0, "neg": False, "val_top": zero_y - 14})
+        elif v >= 0:
+            bar_h = max(min_bar, (v / max_pos) * up_budget) if max_pos else min_bar
+            bar_top = zero_y - bar_h
+            bars.append({"bar_top": bar_top, "bar_h": bar_h, "neg": False, "val_top": bar_top - 14})
+        else:
+            bar_h = max(min_bar, (abs(v) / max_neg) * down_budget) if max_neg else min_bar
+            bars.append({"bar_top": zero_y, "bar_h": bar_h, "neg": True, "val_top": zero_y + bar_h + 2})
+
+    return {"zero_y": zero_y, "bars": bars}
 
 
 def _env():
@@ -69,7 +95,7 @@ def _env():
         pct_span=lambda v: _markup(pct_span(v)),
         pct_span_compact=lambda v: _markup(pct_span_compact(v)),
         arrow=arrow,
-        bar_height=bar_height,
+        bar_chart_layout=bar_chart_layout,
     )
     return env
 

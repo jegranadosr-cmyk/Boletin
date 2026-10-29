@@ -104,7 +104,7 @@ def build_data():
         if err:
             errors.append(f"{ticker}: {err}")
             globales.append({"nombre": nombre, "ticker": nombre, "pais": pais, "price": None, "pct_day": None,
-                             "pct_month": None, "pct_year": None})
+                             "pct_week": None, "pct_month": None, "pct_year": None})
         else:
             globales.append({"nombre": nombre, "ticker": nombre, "pais": pais, **{k: v for k, v in r.items() if k != "series"}})
     data["mercados_globales"] = globales

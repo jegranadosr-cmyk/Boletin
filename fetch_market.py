@@ -83,24 +83,28 @@ def _baseline_before(series, cutoff_date):
 
 
 def pct_changes_for_symbol(symbol, today=None):
-    """Returns dict: price, pct_day, pct_month, pct_year. Raises on hard failure."""
+    """Returns dict: price, pct_day, pct_week, pct_month, pct_year. Raises on hard failure."""
     today = today or datetime.datetime.utcnow().date()
     meta, series = fetch_chart(symbol)
     price = meta.get("regularMarketPrice")
     pct_day = meta.get("regularMarketChangePercent")
 
+    week_start = today - datetime.timedelta(days=today.weekday())
     month_start = today.replace(day=1)
     year_start = today.replace(month=1, day=1)
 
+    week_base = _baseline_before(series, week_start)
     month_base = _baseline_before(series, month_start)
     year_base = _baseline_before(series, year_start)
 
+    pct_week = ((price - week_base) / week_base * 100) if week_base else None
     pct_month = ((price - month_base) / month_base * 100) if month_base else None
     pct_year = ((price - year_base) / year_base * 100) if year_base else None
 
     return {
         "price": price,
         "pct_day": pct_day,
+        "pct_week": pct_week,
         "pct_month": pct_month,
         "pct_year": pct_year,
         "series": series,
