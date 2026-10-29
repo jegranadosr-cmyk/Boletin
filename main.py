@@ -10,6 +10,7 @@ import fetch_bvc as fb
 import fetch_rates as fr
 import fetch_macro as fmac
 import fetch_fear_greed as ffg
+import fetch_semis as fsem
 import resumen as rs
 import render as rd
 import send_telegram as st
@@ -47,6 +48,12 @@ def build_data():
         else:
             siete.append({"ticker": t, "nombre_empresa": COMPANY_NAMES[t], **{k: v for k, v in r.items() if k != "series"}})
     data["siete_magnificas"] = siete
+
+    # Top empresas de la cadena de semiconductores (market cap + variaciones)
+    r, err = safe(fsem.build_semis_data, 6)
+    data["semis"] = r if not err else []
+    if err:
+        errors.append(f"Semis: {err}")
 
     # Indicadores (S&P500, Nasdaq100, Dow, Russell2000, VIX, MOVE, Bitcoin)
     indicadores = {}

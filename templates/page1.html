@@ -55,6 +55,24 @@
           </div>
         </div>
 
+        {% if semis %}
+        <table class="boletin-table">
+          <caption class="caption-lg">Semiconductores (Market Cap)</caption>
+          <thead><tr><th>Empresa</th><th class="num">Cap. (B USD)</th><th class="num">%Día</th><th class="num">%Mes</th><th class="num">%Año</th></tr></thead>
+          <tbody>
+          {% for s in semis %}
+            <tr>
+              <td class="name">{{ s.nombre }}</td>
+              <td class="num">{{ '${:,.0f}'.format(s.market_cap_b) if s.market_cap_b is not none else '-' }}</td>
+              <td class="num">{{ pct_span(s.pct_day) }}</td>
+              <td class="num">{{ pct_span(s.pct_month) }}</td>
+              <td class="num">{{ pct_span(s.pct_year) }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+
         <table class="boletin-table">
           <caption class="caption-lg">Divisas</caption>
           <thead><tr><th>Divisa</th><th class="num">Nivel</th><th class="num">%Día</th><th class="num">%Mes</th><th class="num">%Año</th></tr></thead>
