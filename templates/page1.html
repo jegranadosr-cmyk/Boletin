@@ -28,12 +28,12 @@
       <div class="col col-spread">
         <table class="boletin-table">
           <caption class="caption-lg">Las Siete Magníficas</caption>
-          <thead><tr><th>Ticker</th><th class="num">Precio</th><th class="num">%Día</th><th class="num">%Mes</th><th class="num">%Año</th></tr></thead>
+          <thead><tr><th>Ticker</th><th class="num">Cap. (B USD)</th><th class="num">%Día</th><th class="num">%Mes</th><th class="num">%Año</th></tr></thead>
           <tbody>
           {% for m in siete_magnificas %}
             <tr>
               <td class="name">{{ m.ticker }}</td>
-              <td class="num">{{ fmt_price(m.price) }}</td>
+              <td class="num">{{ '${:,.0f}'.format(m.market_cap_b) if m.market_cap_b is not none else '-' }}</td>
               <td class="num">{{ pct_span(m.pct_day) }}</td>
               <td class="num">{{ pct_span(m.pct_month) }}</td>
               <td class="num">{{ pct_span(m.pct_year) }}</td>

@@ -19,6 +19,23 @@ def _ipv4_only_getaddrinfo(host, port, family=0, type=0, proto=0, flags=0):
 socket.getaddrinfo = _ipv4_only_getaddrinfo
 
 HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+MCAP_HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+MCAP_URL = "https://companiesmarketcap.com/{slug}/marketcap/"
+
+
+def fetch_market_cap_b(slug):
+    """Market cap in billions USD, scraped from companiesmarketcap.com's meta
+    description tag (e.g. "has a market cap of $2.260 Trillion USD")."""
+    import re
+    req = urllib.request.Request(MCAP_URL.format(slug=slug), headers=MCAP_HEADERS)
+    with urllib.request.urlopen(req, timeout=20) as resp:
+        html = resp.read().decode("utf-8", errors="ignore")
+    m = re.search(r"market cap of \$([\d.]+) (Trillion|Billion) USD", html)
+    if not m:
+        return None
+    value, unit = m.groups()
+    value = float(value)
+    return value * 1000 if unit == "Trillion" else value
 
 
 def _get_json(url, retries=3, timeout=15):
@@ -125,6 +142,16 @@ def cross_pct_changes(sym_num, sym_den, invert_num=False, today=None):
 
 SIETE_MAGNIFICAS = ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "TSLA", "META"]
 
+SIETE_MAGNIFICAS_MCAP_SLUGS = {
+    "AAPL": "apple",
+    "MSFT": "microsoft",
+    "GOOGL": "alphabet-google",
+    "AMZN": "amazon",
+    "NVDA": "nvidia",
+    "TSLA": "tesla",
+    "META": "meta-platforms",
+}
+
 INDICADORES = {
     "S&P 500": "^GSPC",
     "S&P 500 EQUIPONDERADO": "RSP",
@@ -176,7 +203,6 @@ MATERIAS_PRIMAS = [
     ("Brent", "BZ=F"),
     ("Oro", "GC=F"),
     ("Plata", "SI=F"),
-    ("Gas natural", "NG=F"),
 ]
 
 EXTRA = {

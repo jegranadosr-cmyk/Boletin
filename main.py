@@ -41,16 +41,20 @@ def build_data():
     siete = []
     for t in fm.SIETE_MAGNIFICAS:
         r, err = safe(fm.pct_changes_for_symbol, t)
+        mcap, mcap_err = safe(fm.fetch_market_cap_b, fm.SIETE_MAGNIFICAS_MCAP_SLUGS[t])
+        if mcap_err:
+            errors.append(f"{t} mcap: {mcap_err}")
         if err:
             errors.append(f"{t}: {err}")
-            siete.append({"ticker": t, "nombre_empresa": COMPANY_NAMES[t], "price": None,
+            siete.append({"ticker": t, "nombre_empresa": COMPANY_NAMES[t], "market_cap_b": mcap,
                           "pct_day": None, "pct_month": None, "pct_year": None})
         else:
-            siete.append({"ticker": t, "nombre_empresa": COMPANY_NAMES[t], **{k: v for k, v in r.items() if k != "series"}})
+            siete.append({"ticker": t, "nombre_empresa": COMPANY_NAMES[t], "market_cap_b": mcap,
+                          **{k: v for k, v in r.items() if k not in ("series", "price")}})
     data["siete_magnificas"] = siete
 
     # Top empresas de la cadena de semiconductores (market cap + variaciones)
-    r, err = safe(fsem.build_semis_data, 6)
+    r, err = safe(fsem.build_semis_data, 8)
     data["semis"] = r if not err else []
     if err:
         errors.append(f"Semis: {err}")
