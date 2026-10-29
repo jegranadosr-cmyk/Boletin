@@ -112,6 +112,15 @@ def build_data():
         divisas[nombre] = r if not err else {"price": None, "pct_day": None, "pct_month": None, "pct_year": None}
         if err:
             errors.append(f"{nombre}: {err}")
+
+    for nombre, ticker in {"USD/EUR": "USDEUR=X", "USD/CNY": "USDCNY=X"}.items():
+        r, err = safe(fm.pct_changes_for_symbol, ticker)
+        if err:
+            divisas[nombre] = {"price": None, "pct_day": None, "pct_month": None, "pct_year": None}
+            errors.append(f"{nombre}: {err}")
+        else:
+            divisas[nombre] = {k: v for k, v in r.items() if k != "series"}
+
     data["divisas"] = divisas
 
     # Cafe Fedecafe (fetched first so it can be slotted into materias primas below)
