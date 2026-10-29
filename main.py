@@ -50,10 +50,13 @@ def build_data():
         if err:
             errors.append(f"{t}: {err}")
             siete.append({"ticker": yahoo_ticker, "nombre_empresa": COMPANY_NAMES[t], "market_cap_b": mcap,
-                          "pct_day": None, "pct_month": None, "pct_year": None, "ipo_price": ipo_price})
+                          "pct_day": None, "pct_month": None, "pct_year": None})
         else:
+            # Companies that IPO'd within the current year (SpaceX) have no
+            # year-start baseline, so use the %change since their IPO price instead.
+            if ipo_price and r.get("pct_year") is None and r.get("price") is not None:
+                r["pct_year"] = (r["price"] - ipo_price) / ipo_price * 100
             siete.append({"ticker": yahoo_ticker, "nombre_empresa": COMPANY_NAMES[t], "market_cap_b": mcap,
-                          "ipo_price": ipo_price,
                           **{k: v for k, v in r.items() if k not in ("series", "price")}})
 
     siete.sort(key=lambda x: x["market_cap_b"] if x["market_cap_b"] is not None else -1, reverse=True)

@@ -36,7 +36,7 @@
               <td class="num">{{ '${:,.0f}'.format(m.market_cap_b) if m.market_cap_b is not none else '-' }}</td>
               <td class="num">{{ pct_span(m.pct_day) }}</td>
               <td class="num">{{ pct_span(m.pct_month) }}</td>
-              <td class="num">{{ 'IPO $' + '{:,.2f}'.format(m.ipo_price) if m.get('ipo_price') else pct_span(m.pct_year) }}</td>
+              <td class="num">{{ pct_span(m.pct_year) }}</td>
             </tr>
           {% endfor %}
           </tbody>
