@@ -29,14 +29,14 @@
 
     <table class="boletin-table">
       <caption class="caption-lg">Acciones colombianas (BVC)</caption>
-      <thead><tr><th>Emisor</th><th class="num">Cap. (B COP)</th><th class="num">Cierre COP</th><th class="num">%Día</th><th class="num">%Mes</th><th class="num">%Año</th></tr></thead>
+      <thead><tr><th>Emisor</th><th class="num">Cap. (B COP)</th><th class="num">Cierre COP</th><th class="num">%Semana</th><th class="num">%Mes</th><th class="num">%Año</th></tr></thead>
       <tbody>
       {% for b in bvc %}
         <tr>
           <td class="name">{{ b.nombre }}</td>
           <td class="num">{{ 'ETF' if b.codigo == 'ICOLCAP' else ('${:,.0f}'.format(b.market_cap_b) if b.market_cap_b is not none else '-') }}</td>
           <td class="num">{{ fmt_price(b.precio) }}</td>
-          <td class="num">{{ '<span class="na">s/n</span>' if b.sin_negociacion else pct_span(b.pct_day) }}</td>
+          <td class="num">{{ pct_span(b.pct_week) }}</td>
           <td class="num">{{ pct_span(b.pct_month) }}</td>
           <td class="num">{{ pct_span(b.pct_year) }}</td>
         </tr>

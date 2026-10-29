@@ -203,7 +203,7 @@ def build_data():
     r, err = safe(fb.build_bvc_data, today)
     if err:
         errors.append(f"BVC: {err}")
-        data["bvc"] = [{"nombre": n, "codigo": c, "market_cap_b": None, "precio": None, "pct_day": None, "pct_month": None, "pct_year": None, "sin_negociacion": False}
+        data["bvc"] = [{"nombre": n, "codigo": c, "market_cap_b": None, "precio": None, "pct_week": None, "pct_month": None, "pct_year": None}
                         for n, c in fb.EMISORES]
     else:
         data["bvc"] = r

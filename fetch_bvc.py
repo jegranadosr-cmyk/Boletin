@@ -3,10 +3,13 @@ change from La Republica's public JSON API (no login, no headless browser needed
 
 Endpoint discovered via the 'movimiento accionario' stock pages:
   https://www.larepublica.co/api/quote/bvc-historic/{TICKER}?scale=4&qName={TICKER}
-scale=4 returns ~1 year of daily closes, which is enough to compute %dia, %mes
-(vs last close before the 1st of the current month) and %ano (vs last close
-before Jan 1 of the current year) the same way fetch_market.py does for Yahoo
-Finance tickers.
+scale=4 returns ~1 year of daily closes, which is enough to compute %semana
+(vs last close before this Monday), %mes (vs last close before the 1st of
+the current month) and %ano (vs last close before Jan 1 of the current
+year) the same way fetch_market.py does for Yahoo Finance tickers. Daily
+%dia is skipped for the BVC table -- most of these issuers are thin enough
+that many sessions post no trade at all, so a weekly window is the shortest
+one that reliably reflects real price movement.
 
 Market cap (in COP): stockanalysis.com/quote/bvc/{TICKER}/market-cap/ states it
 plainly in a stat card (e.g. "114.30T"). iCOLCAP is an ETF (tracks the index,
@@ -79,27 +82,22 @@ def _baseline_before(series, cutoff_date):
 
 def _pct_changes(series, today):
     if not series:
-        return None, None, None, None, False
+        return None, None, None, None
     dates_sorted = sorted(series)
     last_date = dates_sorted[-1]
     price = series[last_date]
 
-    prev_dates = [d for d in dates_sorted if d < last_date]
-    prev_close = series[prev_dates[-1]] if prev_dates else None
-    pct_day = ((price - prev_close) / prev_close * 100) if prev_close else None
-    # When this runs before/during the BVC session, the API repeats yesterday's
-    # close verbatim as "today's" price (no new print yet) -- flag that instead
-    # of reporting a misleading "+0.00%" as if the market had actually closed flat.
-    sin_negociacion = prev_close is not None and price == prev_close
-
+    week_start = today - datetime.timedelta(days=today.weekday())
     month_start = today.replace(day=1)
     year_start = today.replace(month=1, day=1)
+    week_base = _baseline_before(series, week_start)
     month_base = _baseline_before(series, month_start)
     year_base = _baseline_before(series, year_start)
+    pct_week = ((price - week_base) / week_base * 100) if week_base else None
     pct_month = ((price - month_base) / month_base * 100) if month_base else None
     pct_year = ((price - year_base) / year_base * 100) if year_base else None
 
-    return price, pct_day, pct_month, pct_year, sin_negociacion
+    return price, pct_week, pct_month, pct_year
 
 
 def _fetch_market_cap_cop_b(codigo):
@@ -122,10 +120,9 @@ def build_bvc_data(today=None):
     for nombre, codigo in EMISORES:
         try:
             series = _fetch_series(codigo)
-            price, pct_day, pct_month, pct_year, sin_negociacion = _pct_changes(series, today)
+            price, pct_week, pct_month, pct_year = _pct_changes(series, today)
         except Exception:
-            price = pct_day = pct_month = pct_year = None
-            sin_negociacion = False
+            price = pct_week = pct_month = pct_year = None
         if codigo == "ICOLCAP":
             market_cap_b = None  # filled below, once the other companies are known
         else:
@@ -135,8 +132,7 @@ def build_bvc_data(today=None):
                 market_cap_b = None
         out.append({
             "nombre": nombre, "codigo": codigo, "market_cap_b": market_cap_b,
-            "precio": price, "pct_day": pct_day, "pct_month": pct_month, "pct_year": pct_year,
-            "sin_negociacion": sin_negociacion,
+            "precio": price, "pct_week": pct_week, "pct_month": pct_month, "pct_year": pct_year,
         })
 
     return out
