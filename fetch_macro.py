@@ -33,6 +33,17 @@ PAISES = [
     ("Colombia", "colombia"),
 ]
 
+# 2-year note yield: tradingeconomics.com (France/USA/China/Japan). Colombia has
+# no standardized 2Y TES benchmark tracked there or on countryeconomy.com, so it
+# stays None -> shown as "-" in the bulletin, same convention used elsewhere for
+# genuinely unavailable data points.
+BOND_2Y_URLS = {
+    "usa": "https://tradingeconomics.com/united-states/2-year-note-yield",
+    "france": "https://tradingeconomics.com/france/2-year-note-yield",
+    "china": "https://tradingeconomics.com/china/2-year-note-yield",
+    "japan": "https://tradingeconomics.com/japan/2-year-note-yield",
+}
+
 
 def _fetch_text(url, timeout=20):
     req = urllib.request.Request(url, headers=HEADERS)
@@ -78,14 +89,29 @@ def fetch_bond_yields():
     return out
 
 
+def fetch_bond_yields_2y():
+    out = {}
+    for slug, url in BOND_2Y_URLS.items():
+        try:
+            html = _fetch_text(url)
+            m = re.search(r'id="market_last">([\d.]+)</span>', html)
+            out[slug] = float(m.group(1)) if m else None
+        except Exception:
+            out[slug] = None
+    out["colombia"] = None
+    return out
+
+
 def fetch_debt_and_bonds():
     debt = fetch_debt_to_gdp()
     bonds = fetch_bond_yields()
+    bonds_2y = fetch_bond_yields_2y()
     out = []
     for nombre, slug in PAISES:
         out.append({
             "pais": nombre,
             "deuda_pib": debt.get(slug),
             "bono_10y": bonds.get(slug),
+            "bono_2y": bonds_2y.get(slug),
         })
     return out

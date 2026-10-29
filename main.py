@@ -175,7 +175,7 @@ def build_data():
             tasa_label = "-"
         resumen_coyuntural.append({
             "pais": d["pais"], "tasa_label": tasa_label,
-            "deuda_pib": d["deuda_pib"], "bono_10y": d["bono_10y"],
+            "deuda_pib": d["deuda_pib"], "bono_10y": d["bono_10y"], "bono_2y": d.get("bono_2y"),
         })
     data["resumen_coyuntural"] = resumen_coyuntural
 
