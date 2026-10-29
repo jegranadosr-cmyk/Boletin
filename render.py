@@ -93,7 +93,7 @@ def render_html(data, template_name):
 
 
 def html_to_png(html_str, out_path):
-    tmp_html = out_path.replace(".png", ".tmp.html")
+    tmp_html = os.path.abspath(out_path.replace(".png", ".tmp.html"))
     with open(tmp_html, "w", encoding="utf-8") as f:
         f.write(html_str)
     with sync_playwright() as p:
