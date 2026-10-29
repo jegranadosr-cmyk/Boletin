@@ -7,28 +7,36 @@ scale=4 returns ~1 year of daily closes, which is enough to compute %dia, %mes
 (vs last close before the 1st of the current month) and %ano (vs last close
 before Jan 1 of the current year) the same way fetch_market.py does for Yahoo
 Finance tickers.
+
+Market cap (in COP): stockanalysis.com/quote/bvc/{TICKER}/market-cap/ states it
+plainly in a stat card (e.g. "114.30T"). iCOLCAP is an ETF (tracks the index,
+no market cap of its own), so it's skipped there -> "-" in the bulletin.
 """
 import datetime
 import json
+import re
 import urllib.request
 
 HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+MCAP_HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36"}
 
 URL_TMPL = "https://www.larepublica.co/api/quote/bvc-historic/{code}?scale=4&qName={code}"
+MCAP_URL_TMPL = "https://stockanalysis.com/quote/bvc/{code}/market-cap/"
+MCAP_PATTERN = re.compile(r'>Market Cap\s*<div[^>]*>.*?-->([\d.]+)([TBM])<', re.S)
 
 EMISORES = [
-    ("iCOLCAP", "ETF del COLCAP", "ICOLCAP"),
-    ("Ecopetrol", "Petróleo y gas", "ECOPETROL"),
-    ("Grupo Cibest PF", "Banca", "CIBEST"),
-    ("ISA", "Transmisión", "ISA"),
-    ("Cementos Argos", "Cemento", "CEMARGOS"),
-    ("Grupo Sura PF", "Inversiones", "GRUPOSURA"),
-    ("Grupo Argos", "Holding", "GRUPOARGOS"),
-    ("Grupo Energía Bogotá", "Energía y gas", "GEB"),
-    ("Mineros", "Minería de oro", "MINEROS"),
-    ("Celsia", "Generación", "CELSIA"),
-    ("Corficolombiana", "Banca de inversión", "CORFICOLCF"),
-    ("Grupo Aval PF", "Banca", "GRUPOAVAL"),
+    ("iCOLCAP", "ICOLCAP"),
+    ("Ecopetrol", "ECOPETROL"),
+    ("Grupo Cibest PF", "CIBEST"),
+    ("ISA", "ISA"),
+    ("Cementos Argos", "CEMARGOS"),
+    ("Grupo Sura PF", "GRUPOSURA"),
+    ("Grupo Argos", "GRUPOARGOS"),
+    ("Grupo Energía Bogotá", "GEB"),
+    ("Mineros", "MINEROS"),
+    ("Celsia", "CELSIA"),
+    ("Corficolombiana", "CORFICOLCF"),
+    ("Grupo Aval PF", "GRUPOAVAL"),
 ]
 
 MESES = {
@@ -90,17 +98,38 @@ def _pct_changes(series, today):
     return price, pct_day, pct_month, pct_year
 
 
+def _fetch_market_cap_cop_b(codigo):
+    """Market cap in miles de millones COP (COP billions, 10^9)."""
+    url = MCAP_URL_TMPL.format(code=codigo)
+    req = urllib.request.Request(url, headers=MCAP_HEADERS)
+    with urllib.request.urlopen(req, timeout=20) as resp:
+        html = resp.read().decode("utf-8", errors="ignore")
+    m = MCAP_PATTERN.search(html)
+    if not m:
+        return None
+    value, unit = float(m.group(1)), m.group(2)
+    scale = {"T": 1000, "B": 1, "M": 0.001}[unit]
+    return value * scale
+
+
 def build_bvc_data(today=None):
     today = today or datetime.date.today()
     out = []
-    for nombre, sector, codigo in EMISORES:
+    for nombre, codigo in EMISORES:
         try:
             series = _fetch_series(codigo)
             price, pct_day, pct_month, pct_year = _pct_changes(series, today)
         except Exception:
             price = pct_day = pct_month = pct_year = None
+        if codigo == "ICOLCAP":
+            market_cap_b = None
+        else:
+            try:
+                market_cap_b = _fetch_market_cap_cop_b(codigo)
+            except Exception:
+                market_cap_b = None
         out.append({
-            "nombre": nombre, "sector": sector, "codigo": codigo,
+            "nombre": nombre, "codigo": codigo, "market_cap_b": market_cap_b,
             "precio": price, "pct_day": pct_day, "pct_month": pct_month, "pct_year": pct_year,
         })
     return out

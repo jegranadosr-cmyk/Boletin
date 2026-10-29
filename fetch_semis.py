@@ -33,6 +33,7 @@ EMPRESAS = [
     ("SK Hynix", "000660.KS", "sk-hynix"),
     ("AMD", "AMD", "amd"),
     ("ASML", "ASML", "asml"),
+    ("Qualcomm", "QCOM", "qualcomm"),
     ("Intel", "INTC", "intel"),
 ]
 

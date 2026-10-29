@@ -54,7 +54,7 @@ def build_data():
     data["siete_magnificas"] = siete
 
     # Top empresas de la cadena de semiconductores (market cap + variaciones)
-    r, err = safe(fsem.build_semis_data, 8)
+    r, err = safe(fsem.build_semis_data, 9)
     data["semis"] = r if not err else []
     if err:
         errors.append(f"Semis: {err}")
@@ -194,8 +194,8 @@ def build_data():
     r, err = safe(fb.build_bvc_data, today)
     if err:
         errors.append(f"BVC: {err}")
-        data["bvc"] = [{"nombre": n, "sector": s, "precio": None, "pct_day": None, "pct_month": None, "pct_year": None}
-                        for n, s, _ in fb.EMISORES]
+        data["bvc"] = [{"nombre": n, "market_cap_b": None, "precio": None, "pct_day": None, "pct_month": None, "pct_year": None}
+                        for n, _ in fb.EMISORES]
     else:
         data["bvc"] = r
 
