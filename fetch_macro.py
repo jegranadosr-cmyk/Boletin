@@ -33,16 +33,16 @@ PAISES = [
     ("Colombia", "colombia"),
 ]
 
-# 2-year note yield: tradingeconomics.com (France/USA/China/Japan). Colombia has
-# no standardized 2Y TES benchmark tracked there or on countryeconomy.com, so it
-# stays None -> shown as "-" in the bulletin, same convention used elsewhere for
-# genuinely unavailable data points.
-BOND_2Y_URLS = {
-    "usa": "https://tradingeconomics.com/united-states/2-year-note-yield",
-    "france": "https://tradingeconomics.com/france/2-year-note-yield",
-    "china": "https://tradingeconomics.com/china/2-year-note-yield",
-    "japan": "https://tradingeconomics.com/japan/2-year-note-yield",
+# 5-year note yield: tradingeconomics.com (France/USA/China/Japan). Colombia
+# isn't tracked there either, but TradingView does have it (CO05Y) -- that page
+# is JS-rendered, so it needs a headless browser instead of a plain request.
+BOND_5Y_URLS = {
+    "usa": "https://tradingeconomics.com/united-states/5-year-note-yield",
+    "france": "https://tradingeconomics.com/france/5-year-note-yield",
+    "china": "https://tradingeconomics.com/china/5-year-note-yield",
+    "japan": "https://tradingeconomics.com/japan/5-year-note-yield",
 }
+COLOMBIA_5Y_TV_URL = "https://www.tradingview.com/symbols/TVC-CO05Y/"
 
 
 def _fetch_text(url, timeout=20):
@@ -89,29 +89,45 @@ def fetch_bond_yields():
     return out
 
 
-def fetch_bond_yields_2y():
+def _fetch_colombia_5y_tradingview():
+    from playwright.sync_api import sync_playwright
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page()
+        page.goto(COLOMBIA_5Y_TV_URL, wait_until="load", timeout=30000)
+        page.wait_for_timeout(3000)
+        el = page.query_selector(".js-symbol-last")
+        text = el.inner_text() if el else None
+        browser.close()
+    return float(text) if text else None
+
+
+def fetch_bond_yields_5y():
     out = {}
-    for slug, url in BOND_2Y_URLS.items():
+    for slug, url in BOND_5Y_URLS.items():
         try:
             html = _fetch_text(url)
             m = re.search(r'id="market_last">([\d.]+)</span>', html)
             out[slug] = float(m.group(1)) if m else None
         except Exception:
             out[slug] = None
-    out["colombia"] = None
+    try:
+        out["colombia"] = _fetch_colombia_5y_tradingview()
+    except Exception:
+        out["colombia"] = None
     return out
 
 
 def fetch_debt_and_bonds():
     debt = fetch_debt_to_gdp()
     bonds = fetch_bond_yields()
-    bonds_2y = fetch_bond_yields_2y()
+    bonds_5y = fetch_bond_yields_5y()
     out = []
     for nombre, slug in PAISES:
         out.append({
             "pais": nombre,
             "deuda_pib": debt.get(slug),
             "bono_10y": bonds.get(slug),
-            "bono_2y": bonds_2y.get(slug),
+            "bono_5y": bonds_5y.get(slug),
         })
     return out
