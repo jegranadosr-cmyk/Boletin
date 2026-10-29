@@ -158,16 +158,17 @@ MERCADOS_GLOBALES = [
     ("DAX", "^GDAXI", "Alemania"),
     ("CAC 40", "^FCHI", "Francia"),
     ("Nikkei 225", "^N225", "Japón"),
-    ("EFA", "EFA", "Desarrollados ex-EE.UU."),
     ("MCHI", "MCHI", "China"),
-    ("IEMG", "IEMG", "Emergentes (amplio)"),
-    ("EMXC", "EMXC", "Emergentes ex-China"),
     ("EWY", "EWY", "Corea del Sur"),
     ("EWT", "EWT", "Taiwán"),
     ("INDA", "INDA", "India"),
     ("EWU", "EWU", "Reino Unido"),
     ("EWP", "EWP", "España"),
-    ("WTI", "CL=F", "Petróleo (EE.UU.)"),
+    ("EWI", "EWI", "Italia"),
+    ("EWZ", "EWZ", "Brasil"),
+    ("EFA", "EFA", "Desarrollados ex-EE.UU."),
+    ("IEMG", "IEMG", "Emergentes (amplio)"),
+    ("EMXC", "EMXC", "Emergentes ex-China"),
 ]
 
 MATERIAS_PRIMAS = [
