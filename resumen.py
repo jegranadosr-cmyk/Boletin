@@ -44,8 +44,8 @@ def generate_bullets(data):
     magnificas = [m for m in data["siete_magnificas"] if m["pct_day"] is not None]
     if magnificas:
         avg = sum(m["pct_day"] for m in magnificas) / len(magnificas)
-        bullets.append(f"Las Siete Magníficas suben {avg:.2f}% en promedio." if avg >= 0
-                        else f"Las Siete Magníficas caen {abs(avg):.2f}% en promedio.")
+        bullets.append(f"Las 8 Magníficas suben {avg:.2f}% en promedio." if avg >= 0
+                        else f"Las 8 Magníficas caen {abs(avg):.2f}% en promedio.")
 
     sectores_validos = [s for s in data["etfs_sectoriales"] if s["pct_day"] is not None]
     if sectores_validos:

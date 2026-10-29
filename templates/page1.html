@@ -27,7 +27,7 @@
     <div class="two-col two-col-fill">
       <div class="col col-spread">
         <table class="boletin-table">
-          <caption class="caption-lg">Las Siete Magníficas</caption>
+          <caption class="caption-lg">Las 8 Magníficas</caption>
           <thead><tr><th>Ticker</th><th class="num">Cap. (B USD)</th><th class="num">%Día</th><th class="num">%Mes</th><th class="num">%Año</th></tr></thead>
           <tbody>
           {% for m in siete_magnificas %}
@@ -36,14 +36,14 @@
               <td class="num">{{ '${:,.0f}'.format(m.market_cap_b) if m.market_cap_b is not none else '-' }}</td>
               <td class="num">{{ pct_span(m.pct_day) }}</td>
               <td class="num">{{ pct_span(m.pct_month) }}</td>
-              <td class="num">{{ pct_span(m.pct_year) }}</td>
+              <td class="num">{{ 'IPO $' + '{:,.2f}'.format(m.ipo_price) if m.get('ipo_price') else pct_span(m.pct_year) }}</td>
             </tr>
           {% endfor %}
           </tbody>
         </table>
 
         <div class="chart-block">
-          <div class="section-title">LAS SIETE MAGNÍFICAS</div>
+          <div class="section-title">LAS 8 MAGNÍFICAS</div>
           <div class="bar-chart">
             {% for m in siete_magnificas %}
               <div class="bar-wrap">
