@@ -236,8 +236,8 @@ def main():
 def run(send=True):
     data = main()
 
-    p1, p2 = rd.render_bulletin(data, "render_out")
-    print(f"Rendered: {p1}, {p2}")
+    p1, p2, pdf = rd.render_bulletin(data, "render_out")
+    print(f"Rendered: {p1}, {p2}, {pdf}")
 
     if send:
         token = os.environ.get("TELEGRAM_BOT_TOKEN")
@@ -249,6 +249,14 @@ def run(send=True):
         print(json.dumps(result, indent=2))
         if not result.get("ok"):
             raise RuntimeError(f"Telegram send failed: {result}")
+
+        # PDF goes as a separate message: Telegram can't mix photos and
+        # documents in the same album, and the PDF preserves text/vector
+        # quality that the PNGs lose to Telegram's own compression.
+        doc_result = st.send_document(token, chat_id, pdf, caption=f"Lupa al mercado · {data['fecha_larga']}")
+        print(json.dumps(doc_result, indent=2))
+        if not doc_result.get("ok"):
+            raise RuntimeError(f"Telegram PDF send failed: {doc_result}")
     return data
 
 

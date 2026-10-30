@@ -132,6 +132,38 @@ def html_to_png(html_str, out_path):
     os.remove(tmp_html)
 
 
+def html_to_pdf(html_str, out_path):
+    """Renders to a single-page PDF sized exactly to the content's own
+    height, so there's no pagination/scale loss -- vector text and CSS
+    stay crisp, unlike the PNGs which Telegram recompresses on send.
+    """
+    tmp_html = os.path.abspath(out_path.replace(".pdf", ".tmp.html"))
+    with open(tmp_html, "w", encoding="utf-8") as f:
+        f.write(html_str)
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page(viewport={"width": 1000, "height": 400})
+        page.goto("file:///" + tmp_html.replace("\\", "/"))
+        page.wait_for_timeout(400)
+        height = page.evaluate("document.documentElement.scrollHeight")
+        page.pdf(
+            path=out_path, width="1000px", height=f"{height}px",
+            print_background=True,
+            margin={"top": "0", "bottom": "0", "left": "0", "right": "0"},
+        )
+        browser.close()
+    os.remove(tmp_html)
+
+
+def merge_pdfs(pdf_paths, out_path):
+    from pypdf import PdfWriter
+    writer = PdfWriter()
+    for p in pdf_paths:
+        writer.append(p)
+    with open(out_path, "wb") as f:
+        writer.write(f)
+
+
 def render_bulletin(data, out_dir):
     os.makedirs(out_dir, exist_ok=True)
     page1_html = render_html(data, "page1.html")
@@ -140,4 +172,14 @@ def render_bulletin(data, out_dir):
     p2_path = os.path.join(out_dir, "page2.png")
     html_to_png(page1_html, p1_path)
     html_to_png(page2_html, p2_path)
-    return p1_path, p2_path
+
+    p1_pdf = os.path.join(out_dir, "page1.pdf")
+    p2_pdf = os.path.join(out_dir, "page2.pdf")
+    html_to_pdf(page1_html, p1_pdf)
+    html_to_pdf(page2_html, p2_pdf)
+    pdf_path = os.path.join(out_dir, "boletin.pdf")
+    merge_pdfs([p1_pdf, p2_pdf], pdf_path)
+    os.remove(p1_pdf)
+    os.remove(p2_pdf)
+
+    return p1_path, p2_path, pdf_path
