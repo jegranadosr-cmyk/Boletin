@@ -37,6 +37,7 @@ EMPRESAS = [
     ("Qualcomm", "QCOM", "qualcomm"),
     ("Intel", "INTC", "intel"),
     ("CXMT", "688825.SS", "cxmt"),
+    ("IBM", "IBM", "ibm"),
 ]
 
 # Companies that IPO'd within the last year have no year-start baseline in

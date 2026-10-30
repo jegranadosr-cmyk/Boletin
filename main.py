@@ -63,9 +63,8 @@ def build_data():
     data["siete_magnificas"] = siete
 
     # Top empresas de la cadena de semiconductores (market cap + variaciones).
-    # Limite = cantidad total en EMPRESAS (11), para no truncar a Qualcomm
-    # ahora que CXMT tambien entra en el ranking por capitalizacion.
-    r, err = safe(fsem.build_semis_data, 11)
+    # Limite = cantidad total en EMPRESAS (12), para no truncar a ninguna.
+    r, err = safe(fsem.build_semis_data, 12)
     data["semis"] = r if not err else []
     if err:
         errors.append(f"Semis: {err}")

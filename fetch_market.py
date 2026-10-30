@@ -232,7 +232,6 @@ MATERIAS_PRIMAS = [
     ("Brent", "BZ=F"),
     ("Oro", "GC=F"),
     ("Plata", "SI=F"),
-    ("Cobre", "HG=F"),
 ]
 
 EXTRA = {
