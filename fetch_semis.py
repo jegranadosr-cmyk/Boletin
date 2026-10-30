@@ -5,10 +5,10 @@ text, e.g. "has a market cap of $2.260 Trillion USD" -- cheap and reliable to
 regex, shared with fetch_market.fetch_market_cap_b). %dia/%mes/%ano: reuses
 fetch_market's Yahoo Finance chart API.
 
-CXMT (ChangXin Memory Technologies) is privately held / state-backed with no
-public listing: no ticker, no market cap, no price history anywhere. It's kept
-in the list (name only, "-" everywhere else) because it's part of the chain
-narrative, not because the data exists.
+CXMT (ChangXin Memory Technologies) IPO'd on Shanghai's STAR Market on
+2026-07-27 (ticker 688825.SS, IPO price 8.66 CNY), so like SpaceX in the
+Ocho Magnificas it has no full year of trading yet: %pct_year falls back to
+the change since its IPO price instead of a 1-year-ago close.
 """
 import socket
 
@@ -36,7 +36,12 @@ EMPRESAS = [
     ("ASML", "ASML", "asml"),
     ("Qualcomm", "QCOM", "qualcomm"),
     ("Intel", "INTC", "intel"),
+    ("CXMT", "688825.SS", "cxmt"),
 ]
+
+# Companies that IPO'd within the last year have no year-start baseline in
+# Yahoo's series, so pct_year falls back to the change since IPO price.
+IPO_PRICE = {"CXMT": 8.66}
 
 
 def build_semis_data(limit=None):
@@ -55,6 +60,9 @@ def build_semis_data(limit=None):
         try:
             r = fm.pct_changes_for_symbol(ticker)
             pct_day, pct_month, pct_year = r["pct_day"], r["pct_month"], r["pct_year"]
+            ipo_price = IPO_PRICE.get(nombre)
+            if ipo_price and pct_year is None and r.get("price") is not None:
+                pct_year = (r["price"] - ipo_price) / ipo_price * 100
         except Exception:
             pct_day = pct_month = pct_year = None
         out.append({
