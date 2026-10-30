@@ -62,8 +62,10 @@ def build_data():
     siete.sort(key=lambda x: x["market_cap_b"] if x["market_cap_b"] is not None else -1, reverse=True)
     data["siete_magnificas"] = siete
 
-    # Top empresas de la cadena de semiconductores (market cap + variaciones)
-    r, err = safe(fsem.build_semis_data, 10)
+    # Top empresas de la cadena de semiconductores (market cap + variaciones).
+    # Limite = cantidad total en EMPRESAS (11), para no truncar a Qualcomm
+    # ahora que CXMT tambien entra en el ranking por capitalizacion.
+    r, err = safe(fsem.build_semis_data, 11)
     data["semis"] = r if not err else []
     if err:
         errors.append(f"Semis: {err}")
@@ -133,7 +135,7 @@ def build_data():
         if err:
             errors.append(f"{nombre}: {err}")
 
-    for nombre, ticker in {"USD/EUR": "USDEUR=X", "USD/CNY": "USDCNY=X", "USD/JPY": "USDJPY=X"}.items():
+    for nombre, ticker in {"USD/CNY": "USDCNY=X", "USD/JPY": "USDJPY=X"}.items():
         r, err = safe(fm.pct_changes_for_symbol, ticker)
         if err:
             divisas[nombre] = {"price": None, "pct_day": None, "pct_month": None, "pct_year": None}
