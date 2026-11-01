@@ -25,9 +25,9 @@ SCALE = 2
 viewport = {"width": 1000, "height": TARGET_RAW_HEIGHT // SCALE}
 
 FILL_CSS = """
-table.boletin-table { font-size: 13.5px; margin-bottom: 24px; }
-table.boletin-table thead th { font-size: 11.5px; padding: 12px 7px 10px; }
-table.boletin-table tbody td { padding: 13px 7px; }
+table.boletin-table { font-size: 13.5px; margin-bottom: 20px; }
+table.boletin-table thead th { font-size: 11.5px; padding: 11px 7px 9px; }
+table.boletin-table tbody td { padding: 11px 7px; }
 table.boletin-table caption.caption-lg { font-size: 17px; padding: 13px 0; }
 .chart-block { margin-bottom: 24px; }
 .bar-chart { height: 205px; }
