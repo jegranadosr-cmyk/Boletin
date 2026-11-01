@@ -90,7 +90,11 @@ def pct_changes_for_symbol(symbol, today=None):
     pct_day = meta.get("regularMarketChangePercent")
 
     week_start = today - datetime.timedelta(days=today.weekday())
-    month_start = today.replace(day=1)
+    # Rolling 30 days instead of calendar-month-to-date: a calendar month
+    # start gives a trivial/misleading %mes on the 1st-2nd of the month
+    # (or right after a weekend), since the baseline close and the current
+    # price can be the same last trading session.
+    month_start = today - datetime.timedelta(days=30)
     year_start = today.replace(month=1, day=1)
 
     week_base = _baseline_before(series, week_start)
@@ -129,7 +133,7 @@ def cross_pct_changes(sym_num, sym_den, invert_num=False, today=None):
     common_dates = sorted(set(series_a) & set(series_b))
     cross_series = {d: combine(series_a[d], series_b[d]) for d in common_dates}
 
-    month_start = today.replace(day=1)
+    month_start = today - datetime.timedelta(days=30)
     year_start = today.replace(month=1, day=1)
 
     # Reconstruct each leg's previous close from Yahoo's own live
