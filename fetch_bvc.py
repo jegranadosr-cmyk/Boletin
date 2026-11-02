@@ -87,9 +87,9 @@ def _pct_changes(series, today):
     last_date = dates_sorted[-1]
     price = series[last_date]
 
-    week_start = today - datetime.timedelta(days=today.weekday())
+    week_start = today - datetime.timedelta(days=7)
     month_start = today - datetime.timedelta(days=30)
-    year_start = today.replace(month=1, day=1)
+    year_start = today - datetime.timedelta(days=365)
     week_base = _baseline_before(series, week_start)
     month_base = _baseline_before(series, month_start)
     year_base = _baseline_before(series, year_start)
