@@ -25,7 +25,7 @@ body {
 
 .page {
   width: 1000px;
-  min-height: 1543px;
+  min-height: 1980px;
   background: #ffffff;
   display: flex;
   flex-direction: column;
@@ -36,6 +36,7 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 }
 .two-col-fill { flex: 1; }
 
@@ -54,8 +55,8 @@ body {
 table.boletin-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 18px;
-  font-size: 12.5px;
+  margin-bottom: 20px;
+  font-size: 13.5px;
 }
 table.boletin-table caption {
   background: var(--green-dark);
@@ -67,7 +68,8 @@ table.boletin-table caption {
   letter-spacing: 0.3px;
 }
 table.boletin-table caption.caption-lg {
-  font-size: 16px;
+  font-size: 17px;
+  padding: 13px 0;
 }
 
 /* compact variant for the Divisas / Materias primas pair placed side by side */
@@ -92,17 +94,17 @@ table.boletin-table caption.caption-lg {
 }
 table.boletin-table thead th {
   text-align: left;
-  font-size: 10.5px;
+  font-size: 11.5px;
   color: var(--text-muted);
   font-weight: 600;
-  padding: 8px 10px 6px;
+  padding: 11px 7px 9px;
   text-transform: uppercase;
   letter-spacing: 0.4px;
   border-bottom: 1px solid var(--gray-border);
 }
 table.boletin-table thead th.num { text-align: right; white-space: nowrap; }
 table.boletin-table tbody td {
-  padding: 7px 10px;
+  padding: 11px 7px;
   border-bottom: 1px solid #f0f0f0;
 }
 table.boletin-table tbody tr:nth-child(even) { background: #fafafa; }
@@ -158,7 +160,7 @@ table.boletin-table td.sub { color: var(--text-muted); font-size: 13px; font-wei
 
 .two-col { display: flex; gap: 28px; }
 .col { flex: 1; min-width: 0; }
-.col-spread { display: flex; flex-direction: column; }
+.col-spread { display: flex; flex-direction: column; justify-content: space-between; }
 .col-spread > .chart-block { margin-top: -6px; margin-bottom: 18px; }
 .col-spread table.boletin-table:last-of-type { margin-bottom: 0; }
 .col-spread table.boletin-table:nth-last-of-type(2) { margin-bottom: 6px; }
@@ -168,55 +170,55 @@ table.boletin-table td.sub { color: var(--text-muted); font-size: 13px; font-wei
 
 /* page1 right column cards */
 .section-title {
-  font-size: 13px;
+  font-size: 14.5px;
   font-weight: 800;
   color: var(--text-dark);
   letter-spacing: 0.3px;
-  margin: 4px 0 10px;
+  margin: 6px 0 14px;
 }
 .indicator-card {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   border-left: 4px solid var(--red-text);
   background: #fff;
   box-shadow: 0 0 0 1px var(--gray-border);
   border-radius: 4px;
-  padding: 7px 14px;
-  margin-bottom: 7px;
+  padding: 11px 16px;
+  margin-bottom: 12px;
 }
 .indicator-card.up { border-left-color: var(--green-text); }
 .indicator-card .icon {
-  width: 28px; height: 28px; border-radius: 50%;
+  width: 32px; height: 32px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 11.5px; font-weight: 800; color: #fff; flex-shrink: 0;
+  font-size: 13px; font-weight: 800; color: #fff; flex-shrink: 0;
 }
 .indicator-card .info { flex: 1; }
-.indicator-card .name { font-size: 10px; color: var(--text-muted); font-weight: 700; letter-spacing: 0.3px; }
-.indicator-card .value { font-size: 17px; font-weight: 800; }
+.indicator-card .name { font-size: 11px; color: var(--text-muted); font-weight: 700; letter-spacing: 0.3px; }
+.indicator-card .value { font-size: 20px; font-weight: 800; }
 .indicator-card .change-stack { display: flex; flex-direction: column; gap: 3px; min-width: 92px; }
 .indicator-card .change-row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
-.indicator-card .change-label { font-size: 9px; color: var(--text-muted); font-weight: 700; letter-spacing: 0.3px; }
-.indicator-card .change-row .pct { font-size: 13px; }
+.indicator-card .change-label { font-size: 10.5px; color: var(--text-muted); font-weight: 700; letter-spacing: 0.3px; }
+.indicator-card .change-row .pct { font-size: 14.5px; }
 
 .sector-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   grid-template-rows: repeat(5, minmax(0, 1fr));
-  gap: 10px;
+  gap: 13px;
   margin-bottom: 0;
 }
 .sector-card {
   background: var(--green-bg);
   border: 1.5px solid var(--green-text);
   border-radius: 4px;
-  padding: 8px 4px;
+  padding: 13px 6px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  gap: 6px;
+  gap: 9px;
   overflow: hidden;
 }
 .sector-card.down { background: var(--red-bg); border-color: var(--red-text); }
@@ -227,9 +229,9 @@ table.boletin-table td.sub { color: var(--text-muted); font-size: 13px; font-wei
   gap: 2px;
   max-width: 100%;
 }
-.sector-card .ticker { font-size: 14.5px; font-weight: 800; }
+.sector-card .ticker { font-size: 15.5px; font-weight: 800; }
 .sector-card .nombre {
-  font-size: 14.5px;
+  font-size: 15.5px;
   font-weight: 700;
   color: var(--text-muted);
   overflow: hidden;
@@ -247,17 +249,17 @@ table.boletin-table td.sub { color: var(--text-muted); font-size: 13px; font-wei
   padding-top: 7px;
 }
 .stat-col { display: flex; flex-direction: column; align-items: center; gap: 2px; flex: 1; min-width: 0; }
-.sector-card .stat-label { font-size: 9.5px; color: var(--text-muted); font-weight: 700; letter-spacing: 0.3px; }
-.sector-card .pct { font-size: 11.5px; font-weight: 800; white-space: nowrap; }
+.sector-card .stat-label { font-size: 10.5px; color: var(--text-muted); font-weight: 700; letter-spacing: 0.3px; }
+.sector-card .pct { font-size: 12.5px; font-weight: 800; white-space: nowrap; }
 
-.bar-chart { display: flex; align-items: stretch; gap: 9px; height: 160px; padding: 10px 4px 0; margin-bottom: 20px; }
+.bar-chart { display: flex; align-items: stretch; gap: 9px; height: 205px; padding: 10px 4px 0; margin-bottom: 20px; }
 .bar-chart-full { height: 210px; gap: 28px; padding: 14px 8px 0; }
 .bar-chart .bar-wrap { flex: 1; position: relative; }
 .bar-chart .zero-line { position: absolute; left: 0; right: 0; height: 1px; background: rgba(0,0,0,0.15); }
-.bar-chart .bar-val { position: absolute; left: 0; right: 0; text-align: center; font-size: 11px; font-weight: 700; }
+.bar-chart .bar-val { position: absolute; left: 0; right: 0; text-align: center; font-size: 12px; font-weight: 700; }
 .bar-chart .bar { position: absolute; left: 15%; width: 70%; background: var(--green-bright); border-radius: 3px 3px 0 0; }
 .bar-chart .bar.neg { background: var(--red-text); border-radius: 0 0 3px 3px; }
-.bar-chart .bar-label { position: absolute; left: 0; right: 0; bottom: 0; text-align: center; font-size: 10px; color: var(--text-muted); font-weight: 700; }
+.bar-chart .bar-label { position: absolute; left: 0; right: 0; bottom: 0; text-align: center; font-size: 11px; color: var(--text-muted); font-weight: 700; }
 
 /* resumen ejecutivo */
 .resumen-list { list-style: none; padding: 0; margin: 0 0 24px; }

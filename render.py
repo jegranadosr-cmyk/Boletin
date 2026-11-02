@@ -118,16 +118,40 @@ def render_html(data, template_name):
     )
 
 
+PNG_RAW_HEIGHT = 3960  # fixed canvas (not content-sized): a taller image
+# compresses to a narrower, more legible final width once Telegram/WhatsApp
+# downscale it to their own cap on the longest side -- same technique
+# BoletinMacro uses. .page's own CSS fills the extra room (justify-content:
+# space-between on .content/.col-spread); this just guards against content
+# someday growing taller than the budget and silently getting cropped.
+PNG_SCALE = 2
+PNG_VIEWPORT = {"width": 1000, "height": PNG_RAW_HEIGHT // PNG_SCALE}
+
+
 def html_to_png(html_str, out_path):
     tmp_html = os.path.abspath(out_path.replace(".png", ".tmp.html"))
     with open(tmp_html, "w", encoding="utf-8") as f:
         f.write(html_str)
     with sync_playwright() as p:
         browser = p.chromium.launch()
-        page = browser.new_page(viewport={"width": 1000, "height": 400}, device_scale_factor=2)
+        page = browser.new_page(viewport=PNG_VIEWPORT, device_scale_factor=PNG_SCALE)
         page.goto("file:///" + tmp_html.replace("\\", "/"))
         page.wait_for_timeout(400)
-        page.screenshot(path=out_path, full_page=True)
+
+        content_h = page.evaluate(
+            "document.querySelector('.col-spread')?.scrollHeight || document.querySelector('.page').scrollHeight"
+        )
+        if content_h > PNG_VIEWPORT["height"]:
+            browser.close()
+            os.remove(tmp_html)
+            raise RuntimeError(
+                f"{out_path}: el contenido ({content_h}px) excede el lienzo fijo "
+                f"({PNG_VIEWPORT['height']}px) -- se cortaria. Sube PNG_RAW_HEIGHT o reduce contenido."
+            )
+
+        page.evaluate(f"document.querySelector('.page').style.minHeight = '{PNG_VIEWPORT['height']}px'")
+        page.wait_for_timeout(200)
+        page.screenshot(path=out_path)
         browser.close()
     os.remove(tmp_html)
 
