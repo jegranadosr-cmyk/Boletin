@@ -108,7 +108,7 @@ table.boletin-table tbody td {
 table.boletin-table tbody tr:nth-child(even) { background: #fafafa; }
 table.boletin-table td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
 table.boletin-table td.name { font-weight: 700; }
-table.boletin-table td.sub { color: var(--text-muted); font-size: 11.5px; }
+table.boletin-table td.sub { color: var(--text-muted); font-size: 13px; font-weight: 700; }
 
 .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; }
 .dot.up { background: var(--green-text); }
