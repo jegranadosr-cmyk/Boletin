@@ -62,8 +62,11 @@ def build_semis_data(limit=None):
             r = fm.pct_changes_for_symbol(ticker)
             pct_day, pct_month, pct_year = r["pct_day"], r["pct_month"], r["pct_year"]
             ipo_price = IPO_PRICE.get(nombre)
-            if ipo_price and pct_year is None and r.get("price") is not None:
-                pct_year = (r["price"] - ipo_price) / ipo_price * 100
+            if ipo_price and r.get("price") is not None:
+                if pct_month is None:
+                    pct_month = (r["price"] - ipo_price) / ipo_price * 100
+                if pct_year is None:
+                    pct_year = (r["price"] - ipo_price) / ipo_price * 100
         except Exception:
             pct_day = pct_month = pct_year = None
         out.append({

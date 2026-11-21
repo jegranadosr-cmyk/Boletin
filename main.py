@@ -52,10 +52,15 @@ def build_data():
             siete.append({"ticker": yahoo_ticker, "nombre_empresa": COMPANY_NAMES[t], "market_cap_b": mcap,
                           "pct_day": None, "pct_month": None, "pct_year": None})
         else:
-            # Companies that IPO'd within the current year (SpaceX) have no
-            # year-start baseline, so use the %change since their IPO price instead.
-            if ipo_price and r.get("pct_year") is None and r.get("price") is not None:
-                r["pct_year"] = (r["price"] - ipo_price) / ipo_price * 100
+            # Companies that IPO'd recently have no 30-day/365-day baseline
+            # yet, so use the %change since their IPO price instead -- for
+            # the first month after listing this makes %Mes and %Ano equal,
+            # which is correct (both are measured from the same IPO price).
+            if ipo_price and r.get("price") is not None:
+                if r.get("pct_month") is None:
+                    r["pct_month"] = (r["price"] - ipo_price) / ipo_price * 100
+                if r.get("pct_year") is None:
+                    r["pct_year"] = (r["price"] - ipo_price) / ipo_price * 100
             siete.append({"ticker": yahoo_ticker, "nombre_empresa": COMPANY_NAMES[t], "market_cap_b": mcap,
                           **{k: v for k, v in r.items() if k not in ("series", "price")}})
 
