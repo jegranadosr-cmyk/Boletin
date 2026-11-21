@@ -27,7 +27,7 @@
     <div class="two-col two-col-fill">
       <div class="col col-spread">
         <table class="boletin-table">
-          <caption class="caption-lg">Las 8 Magníficas</caption>
+          <caption class="caption-lg">Las 9 Magníficas</caption>
           <thead><tr><th>Ticker</th><th class="num">Cap. (B USD)</th><th class="num">%Día</th><th class="num">%Mes</th><th class="num">%Año</th></tr></thead>
           <tbody>
           {% for m in siete_magnificas %}
@@ -43,7 +43,7 @@
         </table>
 
         <div class="chart-block">
-          <div class="section-title">LAS 8 MAGNÍFICAS</div>
+          <div class="section-title">LAS 9 MAGNÍFICAS</div>
           {% set chart = bar_chart_layout(siete_magnificas) %}
           <div class="bar-chart">
             {% for m in siete_magnificas %}

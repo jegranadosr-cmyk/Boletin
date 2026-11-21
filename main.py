@@ -18,7 +18,7 @@ import send_telegram as st
 COMPANY_NAMES = {
     "AAPL": "Apple", "MSFT": "Microsoft", "GOOGL": "Alphabet",
     "AMZN": "Amazon", "NVDA": "NVIDIA", "TSLA": "Tesla", "META": "Meta",
-    "SPACEX": "SpaceX",
+    "SPACEX": "SpaceX", "ANTHROPIC": "Anthropic",
 }
 
 MESES_ES = ["", "enero", "febrero", "marzo", "abril", "mayo", "junio", "julio",
@@ -38,7 +38,7 @@ def build_data():
     errors = []
     data = {"fecha": today}
 
-    # Ocho Magnificas (Siete + SpaceX)
+    # Nueve Magnificas (Siete + SpaceX + Anthropic)
     siete = []
     for t in fm.SIETE_MAGNIFICAS:
         yahoo_ticker = fm.SIETE_MAGNIFICAS_TICKERS[t]

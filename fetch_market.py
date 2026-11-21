@@ -166,18 +166,20 @@ def cross_pct_changes(sym_num, sym_den, invert_num=False, today=None):
     return {"price": price, "pct_day": pct_day, "pct_month": pct_month, "pct_year": pct_year}
 
 
-SIETE_MAGNIFICAS = ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "TSLA", "META", "SPACEX"]
+SIETE_MAGNIFICAS = ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "TSLA", "META", "SPACEX", "ANTHROPIC"]
 
-# SpaceX IPO'd on Nasdaq (ticker SPCX) on 2026-06-12, so it now has a regular
-# Yahoo Finance quote like the rest of the Siete Magnificas.
+# SpaceX IPO'd on Nasdaq (ticker SPCX) on 2026-06-12, and Anthropic IPO'd on
+# Nasdaq (ticker ANT) on 2026-11-19, so both now have a regular Yahoo
+# Finance quote like the rest of the Siete Magnificas.
 SIETE_MAGNIFICAS_TICKERS = {
     "AAPL": "AAPL", "MSFT": "MSFT", "GOOGL": "GOOGL", "AMZN": "AMZN",
     "NVDA": "NVDA", "TSLA": "TSLA", "META": "META", "SPACEX": "SPCX",
+    "ANTHROPIC": "ANT",
 }
 
-# SpaceX's IPO price -- shown in the %Ano column in place of a year-over-year
-# change, since it hasn't been trading a full calendar year yet.
-IPO_PRICE = {"SPACEX": 135.00}
+# IPO prices -- shown in the %Ano column in place of a year-over-year
+# change, for companies that haven't been trading a full calendar year yet.
+IPO_PRICE = {"SPACEX": 135.00, "ANTHROPIC": 83.00}
 
 SIETE_MAGNIFICAS_MCAP_SLUGS = {
     "AAPL": "apple",
@@ -188,6 +190,7 @@ SIETE_MAGNIFICAS_MCAP_SLUGS = {
     "TSLA": "tesla",
     "META": "meta-platforms",
     "SPACEX": "spacex",
+    "ANTHROPIC": "anthropic",
 }
 
 INDICADORES = {
